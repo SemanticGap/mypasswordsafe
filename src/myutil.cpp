@@ -99,7 +99,7 @@ QString parentGroup(const QString &group)
   QString ret(group);
   ret.truncate(i);
 
-  DBGOUT(group << " -> " << ret);
+  DBGOUT((const char *)group << " -> " << (const char *)ret);
   return ret;
 }
 
@@ -125,7 +125,7 @@ QString unescapeGroup(const QString &g)
   if(g.isEmpty())
     return QString::null;
 
-  DBGOUT("unescapeGroup(\"" << g << "\")");
+  DBGOUT("unescapeGroup(\"" << (const char *)g << "\")");
 
   QString ret;
   unsigned int length = g.length();

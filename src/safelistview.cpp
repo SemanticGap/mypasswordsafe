@@ -481,7 +481,7 @@ void SafeListView::itemAdded(SafeItem *item, bool make_current)
   SafeListViewItem *lv_item = NULL;
 
   if(item->rtti() == SafeEntry::RTTI) {
-    DBGOUT("Item name: " << ((SafeEntry *)item)->name());
+    DBGOUT("Item name: " << (const char *)((SafeEntry *)item)->name());
 
     if(parent)
       lv_item = new SafeListViewEntry(parent, (SafeEntry *)item);
@@ -521,8 +521,8 @@ void SafeListView::dropped(QDropEvent *event, SafeListViewItem *target)
   DBGOUT("Item dropped (is target child: " << m_target_is_child << ")");
   DBGOUT("\tAction: " << event->action());
   DBGOUT("\tsrc: " << event->source() << "\ttarget: " << target);
-  DBGOUT("\tAccepted: " << event->isAccepted()
-	 << "\t" << event->isActionAccepted());
+  //DBGOUT("\tAccepted: " << event->isAccepted()
+	// << "\t" << event->isActionAccepted());
   if(SafeDragObject::canDecode(event)) {
     DBGOUT("\tSafeDragObject");
 
@@ -618,7 +618,7 @@ void SafeListView::populate(SafeGroup *group, SafeListViewGroup *view)
     while(iter.current()) {
       SafeItem *item = iter.current();
       if(item->rtti() == SafeEntry::RTTI) {
-	DBGOUT("Adding item: " << ((SafeEntry *)item)->name());
+	DBGOUT("Adding item: " << (const char *)((SafeEntry *)item)->name());
 	if(view == NULL)
 	  (void)new SafeListViewEntry(this, (SafeEntry *)item);
 	else
@@ -626,7 +626,7 @@ void SafeListView::populate(SafeGroup *group, SafeListViewGroup *view)
       }
       else if(item->rtti() == SafeGroup::RTTI) {
 	SafeListViewGroup *g = NULL;
-	DBGOUT("Adding group: " << ((SafeGroup *)item)->name());
+	DBGOUT("Adding group: " << (const char *)((SafeGroup *)item)->name());
 	if(view == NULL)
 	  g = new SafeListViewGroup(this, (SafeGroup *)item);
 	else

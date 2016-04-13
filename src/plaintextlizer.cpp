@@ -166,7 +166,7 @@ Safe::Error PlainTextLizer::saveGroup(QTextStream &file, const SafeGroup *group,
     else if(item->rtti() == SafeGroup::RTTI) {
       QString next_group_name(group_name);
       next_group_name = next_group_name + "/" + escapeGroup(((SafeGroup *)item)->name());
-      DBGOUT("Group: " << next_group_name);
+      DBGOUT("Group: " << (const char *)next_group_name);
       ret = saveGroup(file, (SafeGroup *)item, next_group_name);
     }
 
@@ -198,7 +198,7 @@ Safe::Error PlainTextLizer::saveEntry(QTextStream &file, const SafeEntry *entry,
   QString notes(entry->notes());
   if(!notes.isEmpty()) {
     notes.replace('\n', QString("\\n"));
-    DBGOUT("Notes: " << notes);
+    DBGOUT("Notes: " << (const char *)notes);
     file << notes;
   }
 

@@ -222,7 +222,7 @@ bool XmlSerializer::safeEntryFromXml(const QDomElement &root, SafeEntry *entry)
 	// quietly ignore unknown elements
 #ifdef DEBUG
 	else {
-	  DBGOUT("Unknown element in item: " << tagname);
+	  DBGOUT("Unknown element in item: " << (const char *)tagname);
 	}
 #endif
       }
@@ -264,7 +264,7 @@ bool XmlSerializer::safeGroupFromXml(const QDomElement &elem, SafeGroup *group,
 	// quietly ignore unknown items
 #ifdef DEBUG
 	else {
-	  DBGOUT("Unknown element: " << item.tagName());
+	  DBGOUT("Unknown element: " << (const char *)item.tagName());
 	}
 #endif
       }
