@@ -608,20 +608,32 @@ bool MyPasswordSafe::browseForSafe( QString &filename, QString &filter, bool sav
   QString f;
   bool ret = false;
 
+  static QString path = QString::null;
+  if(path == QString::null) {
+    char *home = getenv("HOME");
+    if(home != NULL) {
+      path = QString(home);
+    } else {
+      path = QString("/");
+    }
+  }
+
   do {
     if(saving) {
-      f = MyFileDialog::getSaveFileName(QString::null,
+      f = MyFileDialog::getSaveFileName(path,
 				       types,
 				       this,
 				       // "save file dialog",
+                                       "savefile",
 				       tr("Enter a file to save to")); //,
 				       // &filter);
     }
     else {
-      f = MyFileDialog::getOpenFileName(QString::null,
+      f = MyFileDialog::getOpenFileName(path,
 				       types,
 				       this,
 				       // "open file dialog",
+                                       "openfile",
 				       tr("Choose a file to open")); // ,
 				       // &filter);
     }
@@ -641,6 +653,8 @@ bool MyPasswordSafe::browseForSafe( QString &filename, QString &filter, bool sav
       filename = f;
       if(filter == all_safes)
 	filter = QString::null;
+
+      path = QFileInfo(f).absolutePath();
 
       ret = true;
     }

@@ -1,4 +1,5 @@
 MyPasswordSafe
+*.app
 .moc/*
 .ui/*
 *.o

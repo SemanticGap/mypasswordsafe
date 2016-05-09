@@ -7,6 +7,12 @@ CONFIG	+= qt warn_on
 LIBS	+= uuid-1.0.0/.libs/libuuid.a
 INCLUDEPATH	+= uuid-1.0.0 src
 
+macx {
+  LIBS += -framework cocoa -framework carbon
+  CONFIG += app_bundle
+  QMAKE_INFO_PLIST = MyPasswordSafe.plist
+}
+
 # idle
 CONFIG += idle
 IDLE_CPP = src/tools/idle
