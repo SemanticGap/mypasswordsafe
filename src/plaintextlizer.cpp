@@ -20,8 +20,7 @@
 #include <qstringlist.h>
 #include <qstring.h>
 #include <qfile.h>
-#include <QTextIStream>
-#include <QTextOStream>
+#include <QTextStream>
 #include "safe.hpp"
 #include "securedstring.hpp"
 #include "encryptedstring.hpp"

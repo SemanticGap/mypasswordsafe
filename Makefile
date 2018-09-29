@@ -10,7 +10,7 @@ endif
 
 QMAKE=qmake
 DATE=$(shell date +%Y%m%d)
-VERSION=0.6.7
+VERSION=0.7.0
 APPNAME=MyPasswordSafe
 ORGNAME=SemanticGap
 ORGDOMAIN=SemanticGap.com
