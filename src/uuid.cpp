@@ -125,7 +125,7 @@ void UUID::toArray(unsigned char array[16]) const
 
 void UUID::fromString(const QString &str)
 {
-  uuid_rc_t error = uuid_import(m_uuid, UUID_FMT_STR, (const void *)str.ascii(), str.length());
+  uuid_rc_t error = uuid_import(m_uuid, UUID_FMT_STR, (const void *)str.toAscii(), str.length());
   if(error != UUID_RC_OK)
     throw errorToException(error);
 }

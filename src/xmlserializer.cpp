@@ -20,7 +20,7 @@
 #include <qstring.h>
 #include <qstringlist.h>
 #include <qfile.h>
-#include <q3textstream.h>
+#include <qtextstream.h>
 #include "safe.hpp"
 #include "xmlserializer.hpp"
 #include "myutil.hpp"
@@ -80,8 +80,8 @@ Safe::Error XmlSerializer::save(Safe &safe, const QString &path, const QString &
     QDomDocument doc("MyPasswordSafe");
     doc.appendChild(safeToXml(doc, safe));
 
-    Q3TextStream stream(&file);
-    stream.setEncoding(Q3TextStream::UnicodeUTF8);
+    QTextStream stream(&file);
+    stream.setCodec("UTF-8");
     stream << doc.toString();
     file.close();
 
@@ -154,7 +154,7 @@ bool XmlSerializer::safeFromXml(const QDomDocument &doc, Safe &safe)
   QDomElement root = doc.documentElement();
   if(root.tagName() == "safe") {
     QString pword = root.attribute("password");
-    EncryptedString es(pword);
+    EncryptedString es(pword.toUtf8());
     safe.setPassPhrase(es);
 
     return safeGroupFromXml(root, &safe, "safe");
@@ -187,7 +187,7 @@ bool XmlSerializer::safeEntryFromXml(const QDomElement &root, SafeEntry *entry)
 	  entry->setUser(value.toText().data());
 	}
 	else if(tagname == "password") {
-	  entry->setPassword(value.toText().data());
+	  entry->setPassword(value.toText().data().toUtf8());
 	}
 	else if(tagname == "notes") {
 	  QString notes;
@@ -289,7 +289,7 @@ QDomElement XmlSerializer::fieldToXml(QDomDocument &doc,
     xml.appendChild(doc.createTextNode(value));
   }
   else {
-    QStringList lines = QStringList::split("\n", value);
+    QStringList lines = value.split("\n");
     QStringList::Iterator it = lines.begin();
     QStringList::Iterator end = lines.end();
 

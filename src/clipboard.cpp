@@ -31,7 +31,7 @@ public:
 	{
 		cb = QApplication::clipboard();
 
-		clear_timer = new QTimer(parent, "clear_timer");
+		clear_timer = new QTimer(parent);
 		connect(clear_timer, SIGNAL(timeout()), parent, SLOT(timerFired()));
 	}
 
@@ -81,7 +81,7 @@ void Clipboard::setTimeOut(unsigned int t)
 
 void Clipboard::start()
 {
-	d->clear_timer->start(timeOut(), true);
+	d->clear_timer->start(timeOut());
 }
 
 void Clipboard::stop()

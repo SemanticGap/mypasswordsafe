@@ -66,7 +66,7 @@ SafeGroup *findGroup(SafeGroup *group, const QString &full_group)
   //DBGOUT("\tName: " << group_name);
 
   SafeGroup::Iterator it(group);
-  while(it.current()) {
+  while(it != group->last()) {
     if(it.current()->rtti() == SafeGroup::RTTI) {
       SafeGroup *temp = (SafeGroup *)it.current();
       if(temp->name() == group_name) {
@@ -188,45 +188,29 @@ void SafeItem::setName(const QString &name)
 
 
 SafeGroup::Iterator::Iterator(const SafeGroup *group)
-  : m_iter(group->m_items)
 {
+  m_iter = group->m_items.begin();
+}
+
+SafeGroup::Iterator::Iterator(SafeGroup::ItemListConstIterator iter)
+{
+  m_iter = iter;
 }
 
 SafeItem *SafeGroup::Iterator::current() const
 {
-  return m_iter.current();
+  return *m_iter;
 }
 
 SafeItem *SafeGroup::Iterator::next()
 {
-  return ++m_iter;
+  return *(++m_iter);
 }
 
 SafeItem *SafeGroup::Iterator::prev()
 {
-  return --m_iter;
+  return *(--m_iter);
 }
-
-SafeItem *SafeGroup::Iterator::toFirst()
-{
-  return m_iter.toFirst();
-}
-
-SafeItem *SafeGroup::Iterator::toLast()
-{
-  return m_iter.toLast();
-}
-
-bool SafeGroup::Iterator::atFirst() const
-{
-  return m_iter.atFirst();
-}
-
-bool SafeGroup::Iterator::atLast() const
-{
-  return m_iter.atLast();
-}
-
 
 SafeGroup::SafeGroup(SafeGroup *p, const QString &name)
   : SafeItem(p, name)
@@ -260,7 +244,7 @@ void SafeGroup::addItem(SafeItem *item)
 
 bool SafeGroup::takeItem(SafeItem *item)
 {
-  bool r = m_items.remove(item);
+  bool r = m_items.removeAll(item);
   item->setParent(NULL);
   return r;
 }
@@ -275,38 +259,32 @@ void SafeGroup::empty()
   // this can be done because SafeItem will
   // call SafeGroup::delItem which will remove
   // the item from m_items
-  while(m_items.first()) {
+  while(count() > 0) {
     delete m_items.first();
   }
 }
 
 SafeItem *SafeGroup::at(int i)
 {
-  if(i < count())
-    return m_items.at(i);
-  else
-    return NULL;
+  return m_items.at(i);
 }
 
-int SafeGroup::index(const SafeItem *item)
+int SafeGroup::index(SafeItem *item) const
 {
-  return m_items.find(item);
+  return m_items.indexOf(item, 0);
 }
 
 SafeGroup::Iterator SafeGroup::first()
 {
-  Iterator i(this);
-  i.toFirst();
+  Iterator i(m_items.begin());
   return i;
 }
 
 SafeGroup::Iterator SafeGroup::last()
 {
-  Iterator i(this);
-  i.toLast();
+  Iterator i(m_items.end());
   return i;
 }
-
 
 
 /** \class SafeEntry safe.hpp
@@ -533,7 +511,7 @@ Safe::Error Safe::checkPassword(const QString &path, const QString &type, const 
   if(!info.exists())
     return BadFile;
 
-  QString ext(info.extension(false));
+  QString ext(info.completeSuffix());
   SafeSerializer *serializer(createSerializer(ext, type));
 
   DBGOUT("Path: " << path.toAscii().data());
@@ -589,7 +567,7 @@ Safe::Error Safe::load(const QString &path, const QString &type,
   if(!info.exists())
     return BadFile;
 
-  QString ext(info.extension(false));
+  QString ext(info.completeSuffix());
   SafeSerializer *serializer(createSerializer(ext, type));
 
   if(serializer) {
@@ -675,7 +653,7 @@ Safe::Error Safe::save(const QString &path, const QString &type,
   Q_ASSERT(!path.isEmpty());
 
   QFileInfo info(path);
-  QString ext(info.extension(false));
+  QString ext(info.completeSuffix());
   SafeSerializer *serializer(createSerializer(ext, type));
 
   if(serializer) {
@@ -869,11 +847,11 @@ bool Safe::makeBackup(const QString &path)
   if(path.isEmpty())
     return false;
 
-  FILE *in = fopen(path, "rb");
+  FILE *in = fopen(path.toUtf8(), "rb");
   if(in != NULL) {
     QString new_path(path);
     new_path += "~";
-    FILE *out = fopen(new_path, "wb");
+    FILE *out = fopen(new_path.toUtf8(), "wb");
     char buffer[1024];
     int num_read = 0;
     do {

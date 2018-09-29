@@ -26,7 +26,7 @@ static const QString SafeDragObject_MimeType = "application/mypasswordsafe";
 static const QString SafeDragObject_Text = "text/plain";
 
 SafeDragObject::SafeDragObject(QWidget *src)
-  : Q3DragObject(src), m_xml("MyPasswordSafe"), m_state(Nothing)
+  : QDragObject(src), m_xml("MyPasswordSafe"), m_state(Nothing)
 {
 }
 

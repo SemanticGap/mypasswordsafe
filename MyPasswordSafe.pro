@@ -2,7 +2,7 @@ TEMPLATE	= app
 LANGUAGE	= C++
 ICON            = images/keys.icns
 
-CONFIG	+= qt warn_on
+CONFIG	+= qt warn_on widgets
 
 LIBS	+= uuid-1.0.0/.libs/libuuid.a
 INCLUDEPATH	+= uuid-1.0.0 src
@@ -48,7 +48,6 @@ HEADERS	+= src/mypasswordsafe.hpp \
 	src/uuid.hpp \
 	src/xmlserializer.hpp \
 	src/plaintextlizer.hpp \
-	src/safedragobject.hpp \
 	src/myendian.h \
 	src/crypto/sha1.h \
 	src/crypto/blowfish.h \
@@ -80,7 +79,6 @@ SOURCES	+= src/main.cpp \
 	src/uuid.cpp \
 	src/xmlserializer.cpp \
 	src/plaintextlizer.cpp \
-	src/safedragobject.cpp \
 	src/crypto/sha1.cpp \
 	src/crypto/blowfish.cpp \
         src/crypto/bfproxy.cpp \

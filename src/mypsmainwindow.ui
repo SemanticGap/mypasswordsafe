@@ -73,9 +73,6 @@
      <height>32</height>
     </rect>
    </property>
-   <property name="label">
-    <string>Tools</string>
-   </property>
    <addaction name="fileNewAction"/>
    <addaction name="fileOpenAction"/>
    <addaction name="fileSaveAction"/>

@@ -47,7 +47,7 @@ Safe::Error PlainTextLizer::checkPassword(const QString &path, const SecuredStri
   QFile file(path);
   if(file.open(QIODevice::ReadOnly)) {
     QTextStream stream(&file);
-    stream.setEncoding(QTextStream::UnicodeUTF8);
+    stream.setCodec("UTF-8");
     QString line;
     line = stream.readLine();
     if(line == password.get())
@@ -67,16 +67,16 @@ Safe::Error PlainTextLizer::load(Safe &safe, const QString &path, const Encrypte
   QFile file(path);
   if(file.open(QIODevice::ReadOnly)) {
     QTextStream stream(&file);
-    stream.setEncoding(QTextStream::UnicodeUTF8);
+    stream.setCodec("UTF-8");
     QString line;
 
     line = stream.readLine();
-    if(EncryptedString(line.utf8()) != passphrase)
+    if(EncryptedString(line.toUtf8()) != passphrase)
       return Safe::Failed; // passphrase was invalid
 
     while(!stream.atEnd()) {
       line = stream.readLine();
-      QStringList items = QStringList::split('\t', line, true);
+      QStringList items = line.split('\t');
       DBGOUT("items.count = " << items.count());
       if(items.count() == 9) {
 	SafeGroup *group = findOrCreateGroup(&safe, field(items, 3));
@@ -86,7 +86,7 @@ Safe::Error PlainTextLizer::load(Safe &safe, const QString &path, const Encrypte
 	SafeEntry *item = new SafeEntry(group);
 	item->setName(field(items, 0));
 	item->setUser(field(items, 1));
-	item->setPassword(field(items, 2).utf8());
+	item->setPassword(field(items, 2).toUtf8());
 	item->setCreationTime(QDateTime::fromString(field(items, 4), Qt::ISODate));
 	item->setModifiedTime(QDateTime::fromString(field(items, 5), Qt::ISODate));
 	item->setAccessTime(QDateTime::fromString(field(items, 6), Qt::ISODate));
@@ -138,7 +138,7 @@ Safe::Error PlainTextLizer::save(Safe &safe, const QString &path, const QString 
   QFile file(path);
   if(file.open(QIODevice::WriteOnly)) {
     QTextStream stream(&file);
-    stream.setEncoding(QTextStream::UnicodeUTF8);
+    stream.setCodec("UTF-8");
     // NOTE: the passphrase is decrypted...AND SAVED TO DISK!!
     SecuredString password(safe.getPassPhrase().get());
     stream << password.get() << endl;

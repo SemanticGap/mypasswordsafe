@@ -76,7 +76,7 @@ void StartupDlg::okClicked()
   case 1:
     // FIXME: use the right filter to open the file
     assert(m_myps != NULL);
-    if(m_myps->open(m_filename, EncryptedString(getPassPhrase().utf8())) == false) {
+    if(m_myps->open(m_filename.toUtf8(), EncryptedString(getPassPhrase().toUtf8())) == false) {
       QMessageBox::information(this, tr("MyPasswordSafe"),
 			       tr("Unable to open %1").arg(m_filename),
 			       QMessageBox::Ok);
@@ -92,7 +92,7 @@ void StartupDlg::okClicked()
       return;
     }
     else {
-      m_myps->createNewSafe(EncryptedString(getPassPhrase().utf8()));
+      m_myps->createNewSafe(EncryptedString(getPassPhrase().toUtf8()));
     }
     break;
   default:
@@ -110,7 +110,7 @@ void StartupDlg::actionChanged( int action, bool browse)
 {
   DBGOUT("action" << action);
   if(action == 2) { // create new selected
-    passPhraseStack->raiseWidget(1);
+    passPhraseStack->setCurrentIndex(1);
     newPassPhraseBox->setFocus();
   }
   else {
@@ -140,7 +140,7 @@ void StartupDlg::actionChanged( int action, bool browse)
 	m_myps->setDefaultSafe(getFilename());
       }
     }
-    passPhraseStack->raiseWidget(0);
+    passPhraseStack->setCurrentIndex(0);
     passPhraseBox->setFocus();
   }
 }
@@ -186,13 +186,13 @@ QString StartupDlg::getPassPhrase()
 
 int StartupDlg::getActionBoxItem()
 {
-  return actionBox->currentItem();
+  return actionBox->currentIndex();
 }
 
 
 void StartupDlg::setActionBoxItem(int item)
 {
-  actionBox->setCurrentItem(item);
+  actionBox->setCurrentIndex(item);
 }
 
 void StartupDlg::setMyPasswordSafe(MyPasswordSafe *myps)

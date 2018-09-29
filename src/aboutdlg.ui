@@ -51,7 +51,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget2">
      <property name="currentIndex">
-      <number>1</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -63,8 +63,13 @@
        </property>
        <item>
         <widget class="QTextBrowser" name="infoText">
-         <property name="text">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:xx-large; font-weight:600;&quot;&gt;MyPasswordSafe&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Version: {VERSION}&lt;br/&gt;&lt;br/&gt;Copyright © 2004-2018 &lt;span style=&quot; font-weight:600;&quot;&gt;Semantic Gap&lt;/span&gt;™&lt;br/&gt;&lt;br/&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;http://www.semanticgap.com/&lt;/span&gt;&lt;br/&gt;&lt;br/&gt;Compiled by&lt;br/&gt;{USER}@{HOST} on {DATE}&lt;br/&gt;&lt;br/&gt;MyPasswordSafe comes with ABSOLUTELY NO WARRANTY.&lt;br/&gt;&lt;br/&gt;This is free software, and you are welcome to redistribute it under certain conditions. Click the License tab for more information.&lt;br/&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <property name="html">
+          <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:xx-large; font-weight:600;&quot;&gt;MyPasswordSafe&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Version: {VERSION}&lt;br /&gt;&lt;br /&gt;Copyright © 2004-2018 &lt;span style=&quot; font-weight:600;&quot;&gt;Semantic Gap&lt;/span&gt;™&lt;br /&gt;&lt;br /&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;http://www.semanticgap.com/&lt;/span&gt;&lt;br /&gt;&lt;br /&gt;Compiled by&lt;br /&gt;{USER}@{HOST} on {DATE}&lt;br /&gt;&lt;br /&gt;MyPasswordSafe comes with ABSOLUTELY NO WARRANTY.&lt;br /&gt;&lt;br /&gt;This is free software, and you are welcome to redistribute it under certain conditions. Click the License tab for more information.&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
         </widget>
        </item>
@@ -83,8 +88,18 @@
          <height>270</height>
         </rect>
        </property>
-       <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Copyright © 2004-2018 &lt;span style=&quot; font-weight:600;&quot;&gt;Semantic Gap&lt;/span&gt;™ &lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Semantic Gap&lt;/span&gt; and the double spiral logo are trademarks of Semantic Gap. &lt;/p&gt;&lt;p&gt;This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version. &lt;/p&gt;&lt;p&gt;This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. &lt;/p&gt;&lt;p&gt;You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA &lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Semantic Gap&lt;/span&gt;™ can be contacted by email at support at semanticgap.com.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <property name="html">
+        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Copyright © 2004-2018 &lt;span style=&quot; font-weight:600;&quot;&gt;Semantic Gap&lt;/span&gt;™ &lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Semantic Gap&lt;/span&gt; and the double spiral logo are trademarks of Semantic Gap. &lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version. &lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. &lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA &lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Semantic Gap&lt;/span&gt;™ can be contacted by email at support at semanticgap.com.&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
       </widget>
      </widget>
@@ -101,24 +116,22 @@
          <height>270</height>
         </rect>
        </property>
-       <property name="text">
-        <string>&lt;html&gt;
-&lt;body&gt;
-&lt;p&gt;Programming and design by Nolan Eakins &amp;lt;&lt;font color=&quot;#0000ff&quot;&gt;sneakin@semanticgap.com&lt;/font&gt;&amp;gt;&lt;/p&gt;
-
-Thanks go out to:
-&lt;ul&gt;
-&lt;li&gt;Emmanuel Adeline &amp;lt;&lt;font color=&quot;#0000ff&quot;&gt;ead+myps@free.fr&lt;/font&gt;&amp;gt; for translating the manual and UI into French.&lt;/li&gt;
-&lt;li&gt;The Password Safe &amp;lt;&lt;font color=&quot;#0000ff&quot;&gt;http://passwordsafe.sourceforge.net/&lt;/font&gt;&amp;gt; team for providing a program that I needed to port to Linux, and the loading and saving code that this program uses.&lt;/li&gt;
-&lt;li&gt;The KDE project &amp;lt;&lt;font color=&quot;#0000ff&quot;&gt;http://www.kde.org/&lt;/font&gt;&amp;gt; for producing some high-quality ikons that MyPasswordSafe uses.&lt;/li&gt;
-&lt;li&gt;Thomas Klausner &amp;lt;&lt;font color=&quot;#0000ff&quot;&gt;tk@giga.or.at&lt;/font&gt;&amp;gt; for sending patches to fix endian issues on NetBSD, and some Makefile suggestions.&lt;/li&gt;
-&lt;li&gt;Shawn Holwegner &amp;lt;&lt;font color=&quot;#0000ff&quot;&gt;shawn@holwegner.com&lt;/font&gt;&amp;gt; for sending a patch to fix endian issues and releasing MyPasswordSafe on MacOS X.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;br/&gt;
-&lt;br/&gt;
-&lt;hr/&gt;
-&lt;/body&gt;
-&lt;/html&gt;</string>
+       <property name="autoFormatting">
+        <set>QTextEdit::AutoAll</set>
+       </property>
+       <property name="html">
+        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Programming and design by Nolan Eakins &amp;lt;&lt;span style=&quot; color:#0000ff;&quot;&gt;sneakin@semanticgap.com&lt;/span&gt;&amp;gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Thanks go out to: &lt;/p&gt;
+&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Emmanuel Adeline &amp;lt;&lt;span style=&quot; color:#0000ff;&quot;&gt;ead+myps@free.fr&lt;/span&gt;&amp;gt; for translating the manual and UI into French.&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The Password Safe &amp;lt;&lt;span style=&quot; color:#0000ff;&quot;&gt;http://passwordsafe.sourceforge.net/&lt;/span&gt;&amp;gt; team for providing a program that I needed to port to Linux, and the loading and saving code that this program uses.&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The KDE project &amp;lt;&lt;span style=&quot; color:#0000ff;&quot;&gt;http://www.kde.org/&lt;/span&gt;&amp;gt; for producing some high-quality ikons that MyPasswordSafe uses.&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Thomas Klausner &amp;lt;&lt;span style=&quot; color:#0000ff;&quot;&gt;tk@giga.or.at&lt;/span&gt;&amp;gt; for sending patches to fix endian issues on NetBSD, and some Makefile suggestions.&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Shawn Holwegner &amp;lt;&lt;span style=&quot; color:#0000ff;&quot;&gt;shawn@holwegner.com&lt;/span&gt;&amp;gt; for sending a patch to fix endian issues and releasing MyPasswordSafe on MacOS X.&lt;/li&gt;&lt;/ul&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
       </widget>
      </widget>
@@ -164,25 +177,6 @@ Thanks go out to:
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
- <customwidgets>
-  <customwidget>
-   <class>Q3Frame</class>
-   <extends>QFrame</extends>
-   <header>Qt3Support/Q3Frame</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>Q3TextEdit</class>
-   <extends>Q3Frame</extends>
-   <header>q3textedit.h</header>
-  </customwidget>
-  <customwidget>
-   <class>Q3TextBrowser</class>
-   <extends>Q3TextEdit</extends>
-   <header>Qt3Support/Q3TextBrowser</header>
-  </customwidget>
- </customwidgets>
  <resources>
   <include location="../resources.qrc"/>
  </resources>

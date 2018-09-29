@@ -62,17 +62,18 @@ int main( int argc, char ** argv )
 
   MyPasswordSafe myps;
 
+  QTextCodec *codec = QTextCodec::codecForLocale();
   QTranslator qt(0);
 #ifdef DEBUG
-  cout << "Using locale: " << QTextCodec::locale() << endl;
+  cout << "Using locale: " << codec->name() << endl;
 #endif
-  qt.load(QString("qt_") + QTextCodec::locale(), locale_dir);
+  qt.load(QString("qt_") + codec->name(), locale_dir);
   a.installTranslator(&qt);
   QTranslator myapp(0);
-  if(!myapp.load(QString("mypasswordsafe_") + QTextCodec::locale(),
+  if(!myapp.load(QString("mypasswordsafe_") + codec->name(),
 		 locale_dir)) {
 #ifdef DEBUG
-    cout << "No locale file for " << QTextCodec::locale()
+    cout << "No locale file for " << codec->name()
 	 << " found in " << locale_dir << endl;
 #endif
   }

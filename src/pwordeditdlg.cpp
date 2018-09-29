@@ -100,7 +100,7 @@ void PwordEditDlg::accept()
 	if(!isNew()) {
 		// prompt the user to see if they are sure they
 		// want to edit the entry
-		bool pword_changed = (m_item->password() != EncryptedString(passwordEdit->text().utf8())
+		bool pword_changed = (m_item->password() != EncryptedString(passwordEdit->text().toUtf8())
 				      && m_item->password().length() > 0);
 		bool user_changed = (m_item->user() != userEdit->text() && m_item->user().length() > 0);
 		QString msg;
@@ -133,7 +133,7 @@ void PwordEditDlg::accept()
 		m_item = new SafeEntry(m_future_group,
 				       getItemName(),
 				       getUser(),
-				       EncryptedString(getPassword().utf8()),
+				       EncryptedString(getPassword().toUtf8()),
 				       getNotes());
 		assert(m_item != NULL);
 		m_item->safe()->setChanged(true);
@@ -142,7 +142,7 @@ void PwordEditDlg::accept()
 		// otherwise update the item if it's set
 		m_item->setName(getItemName());
 		m_item->setUser(getUser());
-		m_item->setPassword(EncryptedString((const char *)getPassword().utf8()));
+		m_item->setPassword(EncryptedString((const char *)getPassword().toUtf8()));
 		m_item->setNotes(getNotes());
 		m_item->updateModTime();
 
@@ -231,7 +231,7 @@ QString PwordEditDlg::getPassword() const
 
 QString PwordEditDlg::getNotes() const
 {
-	return notesEdit->text();
+	return notesEdit->toPlainText();
 }
 
 
@@ -291,14 +291,12 @@ void PwordEditDlg::setUUID(const QString &uuid)
 
 void PwordEditDlg::showDetails(bool yes)
 {
-	QWidget *tab(tabWidget->page(1));
-	tabWidget->setTabEnabled(tab, yes);
+	tabWidget->setTabEnabled(1, yes);
 }
 
 bool PwordEditDlg::detailsShown() const
 {
-	QWidget *tab(tabWidget->page(1));
-	return tabWidget->isTabEnabled(tab);
+	return tabWidget->isTabEnabled(1);
 }
 
 bool PwordEditDlg::isNew() const

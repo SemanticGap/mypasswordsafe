@@ -19,14 +19,14 @@
 #ifndef SAFEDRAGOBJECT_HPP
 #define SAFEDRAGOBJECT_HPP
 
-#include <q3dragobject.h>
-#include <q3ptrlist.h>
+#include <qdragobject.h>
+#include <qlist.h>
 #include <qdom.h>
 #include <qstring.h>
 
 class SafeItem;
 
-class SafeDragObject: public Q3DragObject
+class SafeDragObject: public QDragObject
 {
   Q_OBJECT;
 

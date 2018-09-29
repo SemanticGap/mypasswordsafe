@@ -82,7 +82,7 @@
     </layout>
    </item>
    <item>
-    <widget class="Q3WidgetStack" name="passPhraseStack">
+    <widget class="QStackedWidget" name="passPhraseStack">
      <widget class="QWidget" name="passPhrase">
       <property name="geometry">
        <rect>
@@ -265,7 +265,6 @@
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
    <class>Q3Frame</class>

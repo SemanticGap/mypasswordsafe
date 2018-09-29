@@ -21,7 +21,7 @@
 
 #include <qobject.h>
 #include <qstring.h>
-#include <q3ptrlist.h>
+#include <qlist.h>
 #include <qdatetime.h>
 #include <vector>
 #include <map>
@@ -74,6 +74,10 @@ class SafeGroup: public SafeItem
 {
   Q_OBJECT;
 
+  typedef QList<SafeItem *> ItemList;
+  typedef QList<SafeItem *>::iterator ItemListIterator;
+  typedef QList<SafeItem *>::const_iterator ItemListConstIterator;
+
 public:
   class Iterator
   {
@@ -81,6 +85,7 @@ public:
 
   public:
     Iterator(const SafeGroup *group);
+    Iterator(ItemListConstIterator iter);
 
     SafeItem *current() const;
     SafeItem *next();
@@ -95,8 +100,11 @@ public:
     inline SafeItem *operator++() { return next(); }
     inline SafeItem *operator--() { return prev(); }
 
+    inline bool operator==(const Iterator &other) const { return m_iter == other.m_iter; }
+    inline bool operator!=(const Iterator &other) const { return m_iter != other.m_iter; }
+
   private:
-    Q3PtrListIterator<SafeItem> m_iter;
+    QList<SafeItem *>::const_iterator m_iter;
   };
 
   static const int RTTI = 1;
@@ -113,7 +121,7 @@ public:
 
   void empty();
   SafeItem *at(int i);
-  int index(const SafeItem *);
+  int index(SafeItem *) const;
 
   Iterator first();
   Iterator last();
@@ -123,9 +131,6 @@ signals:
   void itemPreAdd(SafeItem *, SafeGroup *);
 
 private:
-  typedef Q3PtrList<SafeItem> ItemList;
-  typedef Q3PtrListIterator<SafeItem> ItemListIterator;
-
   ItemList m_items;
 };
 

@@ -35,8 +35,10 @@ PreferencesDlg::~PreferencesDlg()
 void PreferencesDlg::onBrowse()
 {
     QString filename = QFileDialog::getOpenFileName(
-	    QString::null, Safe::getTypes(),
-	    this, "file open", "Open a password safe" );
+	    this,
+            "Open a password safe",
+            QString::null,
+            Safe::getTypes());
     if(!filename.isEmpty()) {
 	defaultSafeBox->setText(filename);
     }

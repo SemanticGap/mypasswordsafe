@@ -28,7 +28,7 @@
 #include <algorithm>
 #include <qglobal.h>
 #include <qstring.h>
-#include <q3cstring.h>
+#include <qbytearray.h>
 #include "safe.hpp"
 #include "securedstring.hpp"
 #include "encryptedstring.hpp"
@@ -197,7 +197,7 @@ CryptoInterface *BlowfishLizer::makeBlowfish(const unsigned char *pass, int pass
 
 Safe::Error BlowfishLizer::checkPassword(const QString &path, const SecuredString &password)
 {
-  FILE *in = fopen(path, "rb");
+  FILE *in = fopen(path.toUtf8(), "rb");
   if(in != NULL) {
     unsigned char randstuff[StuffSize];
     unsigned char randhash[20];
@@ -240,7 +240,7 @@ int BlowfishLizer::readEntry(FILE *in, SafeEntry &item,
 			     const QString &def_user)
 {
   SecuredString data;
-  Q3CString tempdata;
+  QByteArray tempdata;
   int type;
 
   int numread = 0;
@@ -251,7 +251,7 @@ int BlowfishLizer::readEntry(FILE *in, SafeEntry &item,
 
     DBGOUT("tempdata: \"" << tempdata.data() << "\"");
 
-    QStringList name_user(QStringList::split('\xAD', tempdata, true));
+    QList<QByteArray> name_user(tempdata.split('\xAD'));
     if(name_user.size() == 2) {
       //trimRight(name_user[0]);
       tempdata = name_user[0];
@@ -264,7 +264,7 @@ int BlowfishLizer::readEntry(FILE *in, SafeEntry &item,
     }
     // check for the other special character
     else {
-      name_user = QStringList::split('\xA0', tempdata, true);
+      name_user = tempdata.split('\xA0');
       if(name_user.size() == 2) {
 	//tempdata = name_user[0].stripWhiteSpace();
 	//tempdata.truncate(tempdata.length() - 1);
@@ -296,7 +296,7 @@ int BlowfishLizer::readEntry(FILE *in, SafeEntry &item,
 Safe::Error BlowfishLizer::load(Safe &safe, const QString &path, const EncryptedString &passphrase, const QString &def_user)
 {
   //That passkey had better be the same one that came from CheckPassword(...)
-  FILE * in = fopen(path, "rb");
+  FILE * in = fopen(path.toUtf8(), "rb");
 
   if (in == NULL)
     return Safe::Failed;
@@ -328,7 +328,7 @@ Safe::Error BlowfishLizer::load(Safe &safe, const QString &path, const Encrypted
 
 Safe::Error BlowfishLizer::save(Safe &safe, const QString &path, const QString &def_user)
 {
-  FILE *out = fopen(path, "wb");
+  FILE *out = fopen(path.toUtf8(), "wb");
   const EncryptedString &passphrase(safe.getPassPhrase());
 
   DBGOUT("Saving " << path.toAscii().data());
@@ -437,7 +437,7 @@ int BlowfishLizer::writeEntry(FILE *out, SafeEntry &item, CryptoInterface *fish,
 
   int num_written = 0;
   SecuredString data;
-  Q3CString temp(item.name().ascii());
+  QByteArray temp(item.name().toUtf8());
 
   if(v2_hdr == false) {
     if(def_user == item.user()) {
@@ -445,7 +445,7 @@ int BlowfishLizer::writeEntry(FILE *out, SafeEntry &item, CryptoInterface *fish,
     }
     else {
       temp += '\xAD';
-      temp += item.user().ascii();
+      temp += item.user().toUtf8();
     }
   }
 
@@ -457,7 +457,7 @@ int BlowfishLizer::writeEntry(FILE *out, SafeEntry &item, CryptoInterface *fish,
   data.set(item.password().get()); // NOTE: decrypted password
   num_written += writeCBC(out, fish, data, 0, ipthing);
   
-  data.set(item.notes().ascii());
+  data.set(item.notes().toUtf8());
   num_written += writeCBC(out, fish, data, 0, ipthing);
 
   return num_written;
@@ -477,7 +477,7 @@ Safe::Error BlowfishLizer2::load(Safe &safe, const QString &path,
 			  const EncryptedString &passphrase,
 			  const QString &def_user)
 {
-  FILE * in = fopen(path, "rb");
+  FILE * in = fopen(path.toUtf8(), "rb");
 
   if (in == NULL)
     return Safe::Failed;
@@ -538,7 +538,7 @@ Safe::Error BlowfishLizer2::load(Safe &safe, const QString &path,
 
 Safe::Error BlowfishLizer2::save(Safe &safe, const QString &path, const QString &def_user)
 {
-  FILE *out = fopen(path, "wb");
+  FILE *out = fopen(path.toUtf8(), "wb");
   const EncryptedString &passphrase(safe.getPassPhrase());
 
   DBGOUT("Saving " << path.toAscii().data());
@@ -816,7 +816,7 @@ int BlowfishLizer2::writeString(FILE *out, CryptoInterface *fish,
   // especially with groups.
   // FIXME: this should use EncryptedString
   //if(!str.isEmpty()) {
-    Q3CString utf(str.utf8());
+    QByteArray utf(str.toUtf8());
     return writeCBC(out, fish, (const char *)utf,
 		    utf.length(), type, ipthing);
     //}

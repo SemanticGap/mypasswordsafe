@@ -21,7 +21,7 @@
 #include <iostream>
 #include <string>
 #include <qapplication.h>
-#include <q3filedialog.h>
+#include <qfiledialog.h>
 // #include <kfiledialog.h>
 #include <qstatusbar.h>
 #include <qclipboard.h>
@@ -40,7 +40,6 @@
 #include "manualdlg.hpp"
 #include "newpassphrasedlg.hpp"
 #include "myutil.hpp"
-#include "safedragobject.hpp"
 #include "xmlserializer.hpp"
 #include "clipboard.hpp"
 #include "mypasswordsafe.hpp"
@@ -49,7 +48,7 @@
 
 using namespace std;
 
-typedef Q3FileDialog MyFileDialog;
+typedef QFileDialog MyFileDialog;
 
 MyPasswordSafe::MyPasswordSafe(QWidget *parent)
 	: QMainWindow(parent),
@@ -92,9 +91,9 @@ void MyPasswordSafe::init()
   m_idle->start();
   connect(m_idle, SIGNAL(secondsIdle(int)), this, SLOT(slotSecondsIdle(int)));
 
-  settingsGenerateAndShow->setOn(PwordEditDlg::generateAndShow());
-  settingsGenerateAndFetch->setOn(PwordEditDlg::generateAndFetch());
-  settingsGenerateOnNew->setOn(PwordEditDlg::generateOnNew());
+  settingsGenerateAndShow->setChecked(PwordEditDlg::generateAndShow());
+  settingsGenerateAndFetch->setChecked(PwordEditDlg::generateAndFetch());
+  settingsGenerateOnNew->setChecked(PwordEditDlg::generateOnNew());
 }
 
 void MyPasswordSafe::destroy()
@@ -152,11 +151,11 @@ void MyPasswordSafe::fileNew()
   NewPassPhraseDlg dlg(this);
   // NOTE:  the dialog doesn't trash the memory
   if(dlg.exec() == QDialog::Rejected) {
-    statusBar()->message(tr("No pass-phrase entered"));
+    statusBar()->showMessage(tr("No pass-phrase entered"));
     return;
   }
 
-  createNewSafe(EncryptedString(dlg.password().utf8()));
+  createNewSafe(EncryptedString(dlg.password().toUtf8()));
 }
 
 
@@ -170,7 +169,7 @@ void MyPasswordSafe::fileMakeDefault()
 {
   if(m_safe->hasChanged()) {
     if(!save()) {
-      statusBar()->message(tr("The safe must be saved before it can be made the default."));
+      statusBar()->showMessage(tr("The safe must be saved before it can be made the default."));
       return;
     }
   }
@@ -220,7 +219,7 @@ void MyPasswordSafe::fileOpen()
 
   if(browseForSafe(filename, filter, false)) {
     if(!filename.isEmpty()) {
-      QString file_ext = filename.right(filename.findRev('.'));
+      QString file_ext = filename.right(filename.lastIndexOf('.'));
       Safe::Error open_ret = Safe::Failed;
 
       // check the password
@@ -229,34 +228,34 @@ void MyPasswordSafe::fileOpen()
       int num_tries = 0;
       while(num_tries < m_max_tries) {
 	if(passphrase_dlg.exec() == PassPhraseDlg::Accepted) {
-	  pword.set(passphrase_dlg.getText().utf8());
+	  pword.set(passphrase_dlg.getText().toUtf8());
 
 	  open_ret = Safe::checkPassword(filename, filter, pword);
 
 	  if(open_ret == Safe::Success)
 	    break;
 	  else {
-	    statusBar()->message(Safe::errorToString(open_ret));
+	    statusBar()->showMessage(Safe::errorToString(open_ret));
 	  }
 
 	  num_tries++;
 	}
 	else {
-	  statusBar()->message(tr("No pass-phrase entered"));
+	  statusBar()->showMessage(tr("No pass-phrase entered"));
 	  return;
 	}
       }
 
-      if(open(filename, pword, filter)) {
-	statusBar()->message(tr("Opened %1 entries in %2 groups").arg(m_safe->totalNumEntries()).arg(m_safe->totalNumGroups()));
+      if(open(filename.toUtf8(), pword, filter.toUtf8())) {
+	statusBar()->showMessage(tr("Opened %1 entries in %2 groups").arg(m_safe->totalNumEntries()).arg(m_safe->totalNumGroups()));
       }
     }
     else {
-      statusBar()->message(tr("No filename specified"));
+      statusBar()->showMessage(tr("No filename specified"));
     }
   }
   else {
-    statusBar()->message(tr("Open file cancelled"));
+    statusBar()->showMessage(tr("Open file cancelled"));
   }
 }
 
@@ -283,7 +282,7 @@ bool MyPasswordSafe::open( const char *filename, const EncryptedString &passkey,
     ret = s->load((const char *)filename,
 			      (const char *)type,
 			      passkey,
-			      (const char *)PwordEditDlg::default_user);
+			      (const char *)PwordEditDlg::default_user.toUtf8());
     if(ret == Safe::Success) {
       DBGOUT(filename << " has " << s->count() << " entries");
 
@@ -295,22 +294,22 @@ bool MyPasswordSafe::open( const char *filename, const EncryptedString &passkey,
       if(current_safe != NULL)
 	delete current_safe;
 
-      setCaption(tr("MyPasswordSafe: ") + filename);
+      setWindowTitle(tr("MyPasswordSafe: ") + filename);
       savingEnabled(false);
       fileSaveAsAction->setEnabled(true);
       connect(m_safe, SIGNAL(changed()), this, SLOT(savingEnabled()));
       return true;
     }
     else {
-      statusBar()->message(Safe::errorToString(ret));
+      statusBar()->showMessage(Safe::errorToString(ret));
       delete s;
     }
   }
   else if(ret == Safe::Failed) {
-    statusBar()->message(tr("Wrong pass phrase"));
+    statusBar()->showMessage(tr("Wrong pass phrase"));
   }
   else {
-    statusBar()->message(Safe::errorToString(ret));
+    statusBar()->showMessage(Safe::errorToString(ret));
   }
 
   return false;
@@ -324,14 +323,14 @@ bool MyPasswordSafe::save()
     if(path.isEmpty())
       return saveAs();
     else {
-      Safe::Error error = m_safe->save((const char *)PwordEditDlg::default_user);
+      Safe::Error error = m_safe->save((const char *)PwordEditDlg::default_user.toUtf8());
       if(error == Safe::Success) {
 	savingEnabled(false);
-	statusBar()->message(tr("Safe saved"));
+	statusBar()->showMessage(tr("Safe saved"));
 	return true;
       }
       else {
-	statusBar()->message(Safe::errorToString(error));
+	statusBar()->showMessage(Safe::errorToString(error));
       }
     }
   }
@@ -350,19 +349,19 @@ bool MyPasswordSafe::saveAs()
 				       filter,
 				       PwordEditDlg::default_user);
       if(error == Safe::Success) {
-	setCaption(tr("MyPasswordSafe: ") + m_safe->getPath());
-	statusBar()->message(tr("Safe saved"));
+	setWindowTitle(tr("MyPasswordSafe: ") + m_safe->getPath());
+	statusBar()->showMessage(tr("Safe saved"));
 	savingEnabled(false);
 	return true;
       }
       else {
 	DBGOUT("Error: " << error);
-	statusBar()->message(tr("Error saving file"));
+	statusBar()->showMessage(tr("Error saving file"));
       }
     }
   }
   else {
-    statusBar()->message(tr("Save file cancelled"));
+    statusBar()->showMessage(tr("Save file cancelled"));
   }
   return false;
 }
@@ -395,7 +394,7 @@ bool MyPasswordSafe::createEditDialog(SafeEntry *entry)
       PwordEditDlg *item = *iter;
       if(item->getItem() == entry) {
 	item->raise();
-	item->setActiveWindow();
+	item->activateWindow();
 	return false;
       }
     }
@@ -431,7 +430,7 @@ void MyPasswordSafe::pwordAdd()
  */
 {
   if(createEditDialog(NULL) == false) {
-    statusBar()->message(tr("Failed to create password entry dialog"));
+    statusBar()->showMessage(tr("Failed to create password entry dialog"));
   }
 }
 
@@ -442,11 +441,11 @@ void MyPasswordSafe::editDialogAccepted()
 
   if(dlg->isNew()) {
     pwordTreeView->itemAdded(dlg->getItem(), true);
-    statusBar()->message(tr("Item added"));
+    statusBar()->showMessage(tr("Item added"));
   }
   else {
     pwordTreeView->itemChanged(dlg->getItem());
-    statusBar()->message(tr("Password updated"));
+    statusBar()->showMessage(tr("Password updated"));
   }
 
   savingEnabled(true);
@@ -458,10 +457,10 @@ void MyPasswordSafe::editDialogRejected()
   PwordEditDlg *dlg = dynamic_cast<PwordEditDlg *>(sender());
 
   if(dlg->isNew()) {
-    statusBar()->message(tr("Add canceled"));
+    statusBar()->showMessage(tr("Add canceled"));
   }
   else {
-    statusBar()->message(tr("Edit password cancelled"));
+    statusBar()->showMessage(tr("Edit password cancelled"));
     savingEnabled(true); // updated the access time
   }
 
@@ -480,15 +479,15 @@ void MyPasswordSafe::pwordDelete()
     switch(result) {
     case QMessageBox::Yes:
       deleteItem(index);
-      statusBar()->message(tr("Password deleted"));
+      statusBar()->showMessage(tr("Password deleted"));
       break;
     default:
-      statusBar()->message(tr("Delete cancelled"));
+      statusBar()->showMessage(tr("Delete cancelled"));
       break;
     }
   }
   else {
-    statusBar()->message(tr("No item selected"));
+    statusBar()->showMessage(tr("No item selected"));
   }
 }
 
@@ -509,12 +508,12 @@ void MyPasswordSafe::pwordEdit()
       SafeEntry *entry = (SafeEntry *)item;
 
       if(createEditDialog(entry) == false) {
-	statusBar()->message(tr("You are already editing this item."));
+	statusBar()->showMessage(tr("You are already editing this item."));
       }
     }
   }
   else {
-    statusBar()->message(tr("No item selected"));
+    statusBar()->showMessage(tr("No item selected"));
   }
 }
 
@@ -529,10 +528,10 @@ void MyPasswordSafe::pwordFetch()
     SecuredString pword(entry->password().get());
     m_clipboard->copy(QString::fromUtf8(pword.get()), true);
 
-    statusBar()->message(tr("Password copied to clipboard"));
+    statusBar()->showMessage(tr("Password copied to clipboard"));
   }
   else {
-    statusBar()->message(tr("No item selected"));
+    statusBar()->showMessage(tr("No item selected"));
   }
 }
 
@@ -545,10 +544,10 @@ void MyPasswordSafe::pwordFetchUser()
     entry->updateAccessTime();
 
     m_clipboard->copy(entry->user(), true);
-    statusBar()->message(tr("Username copied to clipboard"));
+    statusBar()->showMessage(tr("Username copied to clipboard"));
   }
   else {
-    statusBar()->message(tr("No item selected"));
+    statusBar()->showMessage(tr("No item selected"));
   }
 }
 
@@ -636,22 +635,18 @@ bool MyPasswordSafe::browseForSafe( QString &filename, QString &filter, bool sav
 
   do {
     if(saving) {
-      f = MyFileDialog::getSaveFileName(path,
+      f = MyFileDialog::getSaveFileName(this,
+				       tr("Enter a file to save to"),
+					path,
 				       types,
-				       this,
-				       // "save file dialog",
-                                       "savefile",
-				       tr("Enter a file to save to")); //,
-				       // &filter);
+					&filter);
     }
     else {
-      f = MyFileDialog::getOpenFileName(path,
-				       types,
-				       this,
-				       // "open file dialog",
-                                       "openfile",
-				       tr("Choose a file to open")); // ,
-				       // &filter);
+      f = MyFileDialog::getOpenFileName(this,
+				       tr("Choose a file to open"),
+                                        path,
+				       types,					
+					&filter);
     }
   
     if(!f.isEmpty()) {
@@ -690,10 +685,10 @@ void MyPasswordSafe::createNewSafe(const EncryptedString &passphrase)
     m_safe->setPassPhrase(passphrase);
     pwordTreeView->setSafe(m_safe);
     m_safe->setChanged(false);
-    setCaption(tr("MyPasswordSafe: <untitled>"));
+    setWindowTitle(tr("MyPasswordSafe: <untitled>"));
     savingEnabled(false);
     fileSaveAsAction->setEnabled(false);
-    statusBar()->message(tr("Created new safe"));
+    statusBar()->showMessage(tr("Created new safe"));
   }
 }
 
@@ -702,13 +697,13 @@ void MyPasswordSafe::fileOpenDefault()
 {
   PassPhraseDlg dlg(this);
   if(dlg.exec() == PassPhraseDlg::Accepted) {
-    if(open((const char *)getDefaultSafe(), (const char *)dlg.getText()))
-      statusBar()->message(tr("Opened %1 entries in %2 groups").arg(m_safe->totalNumEntries()).arg(m_safe->totalNumGroups()));
+    if(open((const char *)getDefaultSafe().toUtf8(), (const char *)dlg.getText().toUtf8()))
+      statusBar()->showMessage(tr("Opened %1 entries in %2 groups").arg(m_safe->totalNumEntries()).arg(m_safe->totalNumGroups()));
     else
-      statusBar()->message(tr("Unable to open the default safe"));
+      statusBar()->showMessage(tr("Unable to open the default safe"));
   }
   else {
-    statusBar()->message(tr("No pass-phrase entered"));
+    statusBar()->showMessage(tr("No pass-phrase entered"));
   }
 }
 
@@ -719,12 +714,12 @@ void MyPasswordSafe::fileChangePassPhrase()
   NewPassPhraseDlg dlg(this);
   if(dlg.exec() == NewPassPhraseDlg::Accepted) {
     // set the new password
-    m_safe->setPassPhrase(EncryptedString((const char *)dlg.password().utf8()));
+    m_safe->setPassPhrase(EncryptedString((const char *)dlg.password().toUtf8()));
     savingEnabled(true);
-    statusBar()->message(tr("Pass-phrase changed"));
+    statusBar()->showMessage(tr("Pass-phrase changed"));
   }
   else {
-    statusBar()->message(tr("Canceled"));
+    statusBar()->showMessage(tr("Canceled"));
   }
 }
 
@@ -760,12 +755,12 @@ void MyPasswordSafe::lock()
 
   do {
     dlg.exec(); // will only accept
-  } while(m_safe->getPassPhrase() != EncryptedString(dlg.getText().utf8()));
+  } while(m_safe->getPassPhrase() != EncryptedString(dlg.getText().toUtf8()));
   
   showNormal();
   showChildren();
 
-  statusBar()->message(tr("MyPasswordSafe unlocked"));
+  statusBar()->showMessage(tr("MyPasswordSafe unlocked"));
 }
 
 
@@ -773,14 +768,15 @@ void MyPasswordSafe::createGroup()
 {
   // prompt the user for the groups name
   bool ok = false;
-  QString group_name = QInputDialog::getText(tr("MyPasswordSafe"),
+  QString group_name = QInputDialog::getText(this,
+                                             tr("MyPasswordSafe"),
 					     tr("What would you like to name the group?"),
 					     QLineEdit::Normal,
-					     QString::null, &ok, this);
+					     QString::null, &ok);
 
   // if the user cancels, set the status bar's message and return
   if(ok == false) {
-    statusBar()->message(tr("Create group canceled"));
+    statusBar()->showMessage(tr("Create group canceled"));
     return;
   }
 
@@ -799,7 +795,7 @@ void MyPasswordSafe::createGroup()
     }
     else {
       DBGOUT("Selected item not a valid item type");
-      statusBar()->message(tr("The selected item is invalid"));
+      statusBar()->showMessage(tr("The selected item is invalid"));
       return;
     }
   }
@@ -807,39 +803,39 @@ void MyPasswordSafe::createGroup()
   //    create the group
   SafeGroup *group = new SafeGroup(parent, group_name);
   if(group == NULL) {
-    statusBar()->message(tr("Unable to create the group"));
+    statusBar()->showMessage(tr("Unable to create the group"));
   }
   else {
     m_safe->setChanged(true);
     pwordTreeView->itemAdded(group, true);
 
     savingEnabled(true);
-    statusBar()->message(tr("Created the group \"%1\"").arg(group_name));
+    statusBar()->showMessage(tr("Created the group \"%1\"").arg(group_name));
   }
 }
 
 
 bool MyPasswordSafe::clearClipboardOnExit() const
 {
-  return clearClipboardOnExitAction->isOn();
+  return clearClipboardOnExitAction->isChecked();
 }
 
 
 void MyPasswordSafe::setClearClipboardOnExit(bool yes)
 {
-  clearClipboardOnExitAction->setOn(yes);
+  clearClipboardOnExitAction->setChecked(yes);
 }
 
 
 bool MyPasswordSafe::lockOnMinimize() const
 {
-  return lockOnMinimizeAction->isOn();
+  return lockOnMinimizeAction->isChecked();
 }
 
 
 void MyPasswordSafe::setLockOnMinimize(bool yes)
 {
-  lockOnMinimizeAction->setOn(yes);
+  lockOnMinimizeAction->setChecked(yes);
 }
 
 void MyPasswordSafe::setGenerateAndShow(bool yes) 
@@ -861,12 +857,13 @@ void MyPasswordSafe::setGenerateOnNew(bool yes)
 #include <X11/X.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
+#include <QX11Info>
 
 bool MyPasswordSafe::isMinimized() const
 {
   //DBGOUT("isMinimized: " << QMainWindow::isMinimized());
 
-  Display *display = x11Display();
+  Display *display = QX11Info::display();
   Atom atom;
   static const int prop_buffer_lengh = 1024 * 1024;
   Atom type_returned = 0;
@@ -1061,7 +1058,7 @@ void MyPasswordSafe::dragObjectDropped(QMimeSource *drag, SafeListViewItem *targ
 
 void MyPasswordSafe::clipboardCleared()
 {
-  statusBar()->message(tr("Clipboard cleared"));
+  statusBar()->showMessage(tr("Clipboard cleared"));
 }
 
 void MyPasswordSafe::helpAbout()
@@ -1078,7 +1075,7 @@ void MyPasswordSafe::slotSecondsIdle(int secs)
     if(count_down == 30
        || count_down == 20
        || count_down <= 10) {
-      statusBar()->message(tr("Locking in %1 seconds.").arg(count_down), 2000);
+      statusBar()->showMessage(tr("Locking in %1 seconds.").arg(count_down), 2000);
     }
 
     if(count_down <= 0 && isVisible()) {

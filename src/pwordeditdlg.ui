@@ -107,7 +107,7 @@
             </widget>
            </item>
            <item>
-            <widget class="Q3TextEdit" name="notesEdit"/>
+            <widget class="QTextEdit" name="notesEdit"/>
            </item>
           </layout>
          </item>
