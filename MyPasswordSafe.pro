@@ -118,7 +118,7 @@ TRANSLATIONS = locale/mypasswordsafe_en.ts \
 	locale/mypasswordsafe_fr.ts \
         locale/mypasswordsafe_pig.ts
 #The following line was inserted by qt3to4
-QT += xml  qt3support 
+QT += xml
 #The following line was inserted by qt3to4
 #CONFIG +=
 
