@@ -18,11 +18,12 @@ CONFIG += idle
 IDLE_CPP = src/tools/idle
 INCLUDEPATH += $$IDLE_CPP
 unix {
-	QMAKE_X11_LIBS += -lXss
+	LIBS += -lXss -lX11
 }
 include($$IDLE_CPP/idle.pri)
 
-HEADERS	+= src/safe.hpp \
+HEADERS	+= src/mypasswordsafe.hpp \
+	src/safe.hpp \
 	src/safeserializer.hpp \
 	src/securedstring.hpp \
 	src/encryptedstring.hpp \
@@ -34,9 +35,16 @@ HEADERS	+= src/safe.hpp \
 	src/myutil.hpp \
 	src/exception.hpp \
 	src/startupdlg.hpp \
+	src/passphrasedlg.hpp \
+	src/aboutdlg.hpp \
+	src/manualdlg.hpp \
+	src/newpassphrasedlg.hpp \
+	src/pwordeditdlg.hpp \
+	src/preferencesdlg.hpp \
 	src/config.h \
 	src/smartptr.hpp \
-	src/safelistview.hpp \
+	src/safetreeview.hpp \
+	src/safetreemodel.hpp \
 	src/uuid.hpp \
 	src/xmlserializer.hpp \
 	src/plaintextlizer.hpp \
@@ -49,6 +57,7 @@ HEADERS	+= src/safe.hpp \
         src/clipboard.hpp
 
 SOURCES	+= src/main.cpp \
+	src/mypasswordsafe.cpp \
 	src/securedstring.cpp \
 	src/safe.cpp \
 	src/safeserializer.cpp \
@@ -59,8 +68,15 @@ SOURCES	+= src/main.cpp \
 	src/pwsafe/PW_sha1.cpp \
 	src/myutil.cpp \
 	src/startupdlg.cpp \
+	src/passphrasedlg.cpp \
+	src/aboutdlg.cpp \
+	src/manualdlg.cpp \
+	src/newpassphrasedlg.cpp \
+	src/pwordeditdlg.cpp \
+	src/preferencesdlg.cpp \
 	src/smartptr.cpp \
-	src/safelistview.cpp \
+	src/safetreeview.cpp \
+	src/safetreemodel.cpp \
 	src/uuid.cpp \
 	src/xmlserializer.cpp \
 	src/plaintextlizer.cpp \
@@ -71,14 +87,14 @@ SOURCES	+= src/main.cpp \
         src/clipboard.cpp
 
 #The following line was changed from FORMS to FORMS3 by qt3to4
-FORMS3	= src/mypasswordsafe.ui \
-	src/pwordeditdlg.ui \
-	src/passphrasedlg.ui \
-	src/preferencesdlg.ui \
-	src/aboutdlg.ui \
+FORMS = src/startupdlgbase.ui \
+	src/mypsmainwindow.ui \
 	src/manualdlg.ui \
-	src/startupdlgbase.ui \
-	src/newpassphrasedlg.ui
+	src/passphrasedlg.ui \
+	src/pwordeditdlg.ui \
+	src/newpassphrasedlg.ui \
+	src/preferencesdlg.ui \
+	src/aboutdlg.ui
 
 RESOURCES = resources.qrc
 
@@ -89,6 +105,7 @@ isEmpty(DEBUG) {
 } else {
 	config += debug
 	DEFINES += DEBUG
+	QMAKE_CXXFLAGS += -g
 }
 
 unix {
@@ -103,5 +120,5 @@ TRANSLATIONS = locale/mypasswordsafe_en.ts \
 #The following line was inserted by qt3to4
 QT += xml  qt3support 
 #The following line was inserted by qt3to4
-CONFIG += uic3
+#CONFIG +=
 

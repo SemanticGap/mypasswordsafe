@@ -1,430 +1,395 @@
-<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
-<class>PwordEditDlg</class>
-<widget class="QDialog">
-    <property name="name">
-        <cstring>PwordEditDlg</cstring>
-    </property>
-    <property name="geometry">
-        <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>400</width>
-            <height>351</height>
-        </rect>
-    </property>
-    <property name="sizePolicy">
-        <sizepolicy>
-            <hsizetype>0</hsizetype>
-            <vsizetype>0</vsizetype>
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-        </sizepolicy>
-    </property>
-    <property name="minimumSize">
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>PwordEditDlg</class>
+ <widget class="QDialog" name="PwordEditDlg">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>351</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>400</width>
+    <height>350</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Edit Password</string>
+  </property>
+  <layout class="QVBoxLayout">
+   <item>
+    <widget class="QTabWidget" name="tabWidget">
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>G&amp;eneral</string>
+      </attribute>
+      <layout class="QHBoxLayout">
+       <item>
+        <layout class="QVBoxLayout">
+         <item>
+          <layout class="QGridLayout">
+           <item row="2" column="1">
+            <widget class="QLineEdit" name="passwordEdit">
+             <property name="echoMode">
+              <enum>QLineEdit::Password</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="textLabel1">
+             <property name="text">
+              <string>&amp;Name:</string>
+             </property>
+             <property name="wordWrap">
+              <bool>false</bool>
+             </property>
+             <property name="buddy">
+              <cstring>nameEdit</cstring>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="textLabel2">
+             <property name="text">
+              <string>&amp;User:</string>
+             </property>
+             <property name="wordWrap">
+              <bool>false</bool>
+             </property>
+             <property name="buddy">
+              <cstring>userEdit</cstring>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="textLabel3">
+             <property name="text">
+              <string>&amp;Password:</string>
+             </property>
+             <property name="wordWrap">
+              <bool>false</bool>
+             </property>
+             <property name="buddy">
+              <cstring>passwordEdit</cstring>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLineEdit" name="userEdit"/>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLineEdit" name="nameEdit"/>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QVBoxLayout">
+           <item>
+            <widget class="QLabel" name="textLabel4">
+             <property name="text">
+              <string>No&amp;tes:</string>
+             </property>
+             <property name="wordWrap">
+              <bool>false</bool>
+             </property>
+             <property name="buddy">
+              <cstring>notesEdit</cstring>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="Q3TextEdit" name="notesEdit"/>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QVBoxLayout">
+         <item>
+          <widget class="QPushButton" name="showButton">
+           <property name="text">
+            <string>&amp;Show</string>
+           </property>
+           <property name="shortcut">
+            <string>Alt+S</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="fetchButton">
+           <property name="text">
+            <string>&amp;Fetch</string>
+           </property>
+           <property name="shortcut">
+            <string>Alt+F</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="genButton">
+           <property name="text">
+            <string>&amp;Generate</string>
+           </property>
+           <property name="shortcut">
+            <string>Alt+G</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="spacer4_2">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Expanding</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>119</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>&amp;Details</string>
+      </attribute>
+      <layout class="QVBoxLayout">
+       <item>
+        <widget class="QLabel" name="createdOnLabel">
+         <property name="text">
+          <string>Created on: %1</string>
+         </property>
+         <property name="wordWrap">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="accessedOnLabel">
+         <property name="text">
+          <string>Accessed on: %1</string>
+         </property>
+         <property name="wordWrap">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="modifiedOnLabel">
+         <property name="text">
+          <string>Modified on: %1</string>
+         </property>
+         <property name="wordWrap">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="lifetimeLabel">
+         <property name="text">
+          <string>Lifetime: %1</string>
+         </property>
+         <property name="wordWrap">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="uuidLabel">
+         <property name="text">
+          <string>UUID: %1</string>
+         </property>
+         <property name="wordWrap">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout">
+     <item>
+      <spacer name="spacer5">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Expanding</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
         <size>
-            <width>400</width>
-            <height>350</height>
+         <width>248</width>
+         <height>20</height>
         </size>
-    </property>
-    <property name="caption">
-        <string>Edit Password</string>
-    </property>
-    <vbox>
-        <property name="name">
-            <cstring>unnamed</cstring>
-        </property>
-        <widget class="QTabWidget">
-            <property name="name">
-                <cstring>tabWidget</cstring>
-            </property>
-            <widget class="QWidget">
-                <property name="name">
-                    <cstring>tab</cstring>
-                </property>
-                <attribute name="title">
-                    <string>G&amp;eneral</string>
-                </attribute>
-                <hbox>
-                    <property name="name">
-                        <cstring>unnamed</cstring>
-                    </property>
-                    <widget class="QLayoutWidget">
-                        <property name="name">
-                            <cstring>layout20</cstring>
-                        </property>
-                        <vbox>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <widget class="QLayoutWidget">
-                                <property name="name">
-                                    <cstring>layout17</cstring>
-                                </property>
-                                <grid>
-                                    <property name="name">
-                                        <cstring>unnamed</cstring>
-                                    </property>
-                                    <widget class="QLineEdit" row="2" column="1">
-                                        <property name="name">
-                                            <cstring>passwordEdit</cstring>
-                                        </property>
-                                        <property name="echoMode">
-                                            <enum>Password</enum>
-                                        </property>
-                                    </widget>
-                                    <widget class="QLabel" row="0" column="0">
-                                        <property name="name">
-                                            <cstring>textLabel1</cstring>
-                                        </property>
-                                        <property name="text">
-                                            <string>&amp;Name:</string>
-                                        </property>
-                                        <property name="buddy" stdset="0">
-                                            <cstring>nameEdit</cstring>
-                                        </property>
-                                    </widget>
-                                    <widget class="QLabel" row="1" column="0">
-                                        <property name="name">
-                                            <cstring>textLabel2</cstring>
-                                        </property>
-                                        <property name="text">
-                                            <string>&amp;User:</string>
-                                        </property>
-                                        <property name="buddy" stdset="0">
-                                            <cstring>userEdit</cstring>
-                                        </property>
-                                    </widget>
-                                    <widget class="QLabel" row="2" column="0">
-                                        <property name="name">
-                                            <cstring>textLabel3</cstring>
-                                        </property>
-                                        <property name="text">
-                                            <string>&amp;Password:</string>
-                                        </property>
-                                        <property name="buddy" stdset="0">
-                                            <cstring>passwordEdit</cstring>
-                                        </property>
-                                    </widget>
-                                    <widget class="QLineEdit" row="1" column="1">
-                                        <property name="name">
-                                            <cstring>userEdit</cstring>
-                                        </property>
-                                    </widget>
-                                    <widget class="QLineEdit" row="0" column="1">
-                                        <property name="name">
-                                            <cstring>nameEdit</cstring>
-                                        </property>
-                                    </widget>
-                                </grid>
-                            </widget>
-                            <widget class="QLayoutWidget">
-                                <property name="name">
-                                    <cstring>layout19</cstring>
-                                </property>
-                                <vbox>
-                                    <property name="name">
-                                        <cstring>unnamed</cstring>
-                                    </property>
-                                    <widget class="QLabel">
-                                        <property name="name">
-                                            <cstring>textLabel4</cstring>
-                                        </property>
-                                        <property name="text">
-                                            <string>No&amp;tes:</string>
-                                        </property>
-                                        <property name="buddy" stdset="0">
-                                            <cstring>notesEdit</cstring>
-                                        </property>
-                                    </widget>
-                                    <widget class="QTextEdit">
-                                        <property name="name">
-                                            <cstring>notesEdit</cstring>
-                                        </property>
-                                    </widget>
-                                </vbox>
-                            </widget>
-                        </vbox>
-                    </widget>
-                    <widget class="QLayoutWidget">
-                        <property name="name">
-                            <cstring>layout14</cstring>
-                        </property>
-                        <vbox>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <widget class="QPushButton">
-                                <property name="name">
-                                    <cstring>showButton</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>&amp;Show</string>
-                                </property>
-                                <property name="accel">
-                                    <string>Alt+S</string>
-                                </property>
-                            </widget>
-                            <widget class="QPushButton">
-                                <property name="name">
-                                    <cstring>fetchButton</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>&amp;Fetch</string>
-                                </property>
-                                <property name="accel">
-                                    <string>Alt+F</string>
-                                </property>
-                            </widget>
-                            <widget class="QPushButton">
-                                <property name="name">
-                                    <cstring>genButton</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>&amp;Generate</string>
-                                </property>
-                                <property name="accel">
-                                    <string>Alt+G</string>
-                                </property>
-                            </widget>
-                            <spacer>
-                                <property name="name">
-                                    <cstring>spacer4_2</cstring>
-                                </property>
-                                <property name="orientation">
-                                    <enum>Vertical</enum>
-                                </property>
-                                <property name="sizeType">
-                                    <enum>Expanding</enum>
-                                </property>
-                                <property name="sizeHint">
-                                    <size>
-                                        <width>20</width>
-                                        <height>119</height>
-                                    </size>
-                                </property>
-                            </spacer>
-                        </vbox>
-                    </widget>
-                </hbox>
-            </widget>
-            <widget class="QWidget">
-                <property name="name">
-                    <cstring>tab</cstring>
-                </property>
-                <attribute name="title">
-                    <string>&amp;Details</string>
-                </attribute>
-                <vbox>
-                    <property name="name">
-                        <cstring>unnamed</cstring>
-                    </property>
-                    <widget class="QLabel">
-                        <property name="name">
-                            <cstring>createdOnLabel</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Created on: %1</string>
-                        </property>
-                    </widget>
-                    <widget class="QLabel">
-                        <property name="name">
-                            <cstring>accessedOnLabel</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Accessed on: %1</string>
-                        </property>
-                    </widget>
-                    <widget class="QLabel">
-                        <property name="name">
-                            <cstring>modifiedOnLabel</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Modified on: %1</string>
-                        </property>
-                    </widget>
-                    <widget class="QLabel">
-                        <property name="name">
-                            <cstring>lifetimeLabel</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Lifetime: %1</string>
-                        </property>
-                    </widget>
-                    <widget class="QLabel">
-                        <property name="name">
-                            <cstring>uuidLabel</cstring>
-                        </property>
-                        <property name="text">
-                            <string>UUID: %1</string>
-                        </property>
-                    </widget>
-                </vbox>
-            </widget>
-        </widget>
-        <widget class="QLayoutWidget">
-            <property name="name">
-                <cstring>layout22</cstring>
-            </property>
-            <hbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <spacer>
-                    <property name="name">
-                        <cstring>spacer5</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>248</width>
-                            <height>20</height>
-                        </size>
-                    </property>
-                </spacer>
-                <widget class="QPushButton">
-                    <property name="name">
-                        <cstring>cancelButton</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Cancel</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+C</string>
-                    </property>
-                    <property name="iconSet">
-                        <iconset>:/images/button_cancel.png</iconset>
-                    </property>
-                </widget>
-                <widget class="QPushButton">
-                    <property name="name">
-                        <cstring>okButton</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Ok</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+O</string>
-                    </property>
-                    <property name="default">
-                        <bool>true</bool>
-                    </property>
-                    <property name="iconSet">
-                        <iconset>:/images/button_ok.png</iconset>
-                    </property>
-                </widget>
-            </hbox>
-        </widget>
-    </vbox>
-</widget>
-<connections>
-    <connection>
-        <sender>cancelButton</sender>
-        <signal>clicked()</signal>
-        <receiver>PwordEditDlg</receiver>
-        <slot>reject()</slot>
-    </connection>
-    <connection>
-        <sender>okButton</sender>
-        <signal>clicked()</signal>
-        <receiver>PwordEditDlg</receiver>
-        <slot>accept()</slot>
-    </connection>
-    <connection>
-        <sender>showButton</sender>
-        <signal>clicked()</signal>
-        <receiver>PwordEditDlg</receiver>
-        <slot>togglePassword()</slot>
-    </connection>
-    <connection>
-        <sender>fetchButton</sender>
-        <signal>clicked()</signal>
-        <receiver>PwordEditDlg</receiver>
-        <slot>fetchPassword()</slot>
-    </connection>
-    <connection>
-        <sender>genButton</sender>
-        <signal>clicked()</signal>
-        <receiver>PwordEditDlg</receiver>
-        <slot>genPassword()</slot>
-    </connection>
-</connections>
-<tabstops>
-    <tabstop>nameEdit</tabstop>
-    <tabstop>userEdit</tabstop>
-    <tabstop>passwordEdit</tabstop>
-    <tabstop>notesEdit</tabstop>
-    <tabstop>showButton</tabstop>
-    <tabstop>fetchButton</tabstop>
-    <tabstop>genButton</tabstop>
-    <tabstop>cancelButton</tabstop>
-    <tabstop>okButton</tabstop>
-    <tabstop>tabWidget</tabstop>
-</tabstops>
-<includes>
-    <include location="global" impldecl="in declaration">time.h</include>
-    <include location="local" impldecl="in implementation">pwordeditdlg.ui.h</include>
-</includes>
-<forwards>
-  <forward>class SafeEntry</forward>
-  <forward>class SafeGroup</forward>
-</forwards>
-<variables>
-  <variable access="private">SafeEntry *m_item;</variable>
-  <variable access="private">SafeGroup *m_future_group;</variable>
-  <variable access="public">static int gen_pword_length;</variable>
-  <variable access="public">static QString default_user;</variable>
-  <variable access="private">static bool generate_and_show;</variable>
-  <variable access="private">static bool generate_and_fetch;</variable>
-  <variable access="private">static bool generate_on_new;</variable>
-</variables>
-<signals>
-  <signal>accepted()</signal>
-  <signal>rejected()</signal>
-</signals>
-<slots>
-    <slot>showPassword()</slot>
-    <slot>hidePassword()</slot>
-    <slot>togglePassword()</slot>
-    <slot>genPassword()</slot>
-    <slot>genPassword(bool)</slot>
-    <slot>fetchPassword()</slot>
-    <slot>accept()</slot>
-    <slot>reject()</slot>
-    <slot specifier="static">setGenerateAndShow(bool)</slot>
-    <slot specifier="static">setGenerateAndFetch(bool)</slot>
-    <slot specifier="static">setGenerateOnNew(bool)</slot>
-</slots>
-<functions>
-    <function access="private" specifier="non virtual">init()</function>
-    <function returnType="SafeEntry *">getItem() const</function>
-    <function>setItem(SafeEntry *, SafeGroup *future_group = NULL)</function>
-    <function access="private">updateItem(SafeGroup *future_group = NULL);</function>
-    <function returnType="QString">getItemName() const</function>
-    <function returnType="QString">getUser() const</function>
-    <function returnType="QString">getPassword() const</function>
-    <function returnType="QString">getNotes() const</function>
-    <function>setItemName( const QString &amp; text )</function>
-    <function>setUser( const QString &amp; text )</function>
-    <function>setPassword( const QString &amp; text )</function>
-    <function>setNotes( const QString &amp; text )</function>
-    <function>setGenPwordLength( int value )</function>
-    <function>setCreatedOn( const QDateTime &amp; time )</function>
-    <function>setAccessedOn( const QDateTime &amp; time )</function>
-    <function>setModifiedOn( const QDateTime &amp; time )</function>
-    <function>setLifetime( const QTime &amp; time )</function>
-    <function>setUUID( const QString &amp; uuid )</function>
-    <function>showDetails( bool yes )</function>
-    <function returnType="bool">detailsShown() const</function>
-    <function returnType="bool">isNew() const</function>
-    <function returnType="bool" specifier="static">generateAndShow()</function>
-    <function returnType="bool" specifier="static">generateAndFetch()</function>
-    <function returnType="bool" specifier="static">generateOnNew()</function>
-</functions>
-<pixmapinproject/>
-<layoutdefaults spacing="6" margin="11"/>
-</UI>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="cancelButton">
+       <property name="text">
+        <string>&amp;Cancel</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../resources.qrc">
+         <normaloff>:/images/button_cancel.png</normaloff>:/images/button_cancel.png</iconset>
+       </property>
+       <property name="shortcut">
+        <string>Alt+C</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="okButton">
+       <property name="text">
+        <string>&amp;Ok</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../resources.qrc">
+         <normaloff>:/images/button_ok.png</normaloff>:/images/button_ok.png</iconset>
+       </property>
+       <property name="shortcut">
+        <string>Alt+O</string>
+       </property>
+       <property name="default">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <customwidgets>
+  <customwidget>
+   <class>Q3Frame</class>
+   <extends>QFrame</extends>
+   <header>Qt3Support/Q3Frame</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Q3TextEdit</class>
+   <extends>Q3Frame</extends>
+   <header>q3textedit.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>nameEdit</tabstop>
+  <tabstop>userEdit</tabstop>
+  <tabstop>passwordEdit</tabstop>
+  <tabstop>notesEdit</tabstop>
+  <tabstop>showButton</tabstop>
+  <tabstop>fetchButton</tabstop>
+  <tabstop>genButton</tabstop>
+  <tabstop>cancelButton</tabstop>
+  <tabstop>okButton</tabstop>
+  <tabstop>tabWidget</tabstop>
+ </tabstops>
+ <includes>
+  <include location="global">time.h</include>
+ </includes>
+ <resources>
+  <include location="../resources.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>cancelButton</sender>
+   <signal>clicked()</signal>
+   <receiver>PwordEditDlg</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>okButton</sender>
+   <signal>clicked()</signal>
+   <receiver>PwordEditDlg</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>showButton</sender>
+   <signal>clicked()</signal>
+   <receiver>PwordEditDlg</receiver>
+   <slot>togglePassword()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>fetchButton</sender>
+   <signal>clicked()</signal>
+   <receiver>PwordEditDlg</receiver>
+   <slot>fetchPassword()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>genButton</sender>
+   <signal>clicked()</signal>
+   <receiver>PwordEditDlg</receiver>
+   <slot>genPassword()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

@@ -24,8 +24,8 @@
 #include <qimage.h>
 #include "config.h"
 #include "safe.hpp"
-#include "mypasswordsafe.h"
 #include "startupdlg.hpp"
+#include "mypasswordsafe.hpp"
 
 using namespace std;
 
@@ -56,6 +56,10 @@ bool doStartupDialog(MyPasswordSafe *myps, int argc, char *argv[])
 int main( int argc, char ** argv )
 {
   QApplication a( argc, argv );
+  a.setOrganizationName(ORGNAME);
+  a.setOrganizationDomain(ORGDOMAIN);
+  a.setApplicationName(APPNAME);
+
   MyPasswordSafe myps;
 
   QTranslator qt(0);

@@ -43,10 +43,12 @@ class Safe;
 SafeGroup *findGroup(SafeGroup *group, const QString &full_group);
 SafeGroup *findOrCreateGroup(Safe *safe, const QString &group_name);
 
-class SafeItem
+class SafeItem: public QObject
 {
+  Q_OBJECT;
+
 public:
-  SafeItem(SafeGroup *parent);
+  SafeItem(SafeGroup *parent, const QString &name = QString::null);
   virtual ~SafeItem();
 
   inline SafeGroup *parent() { return m_parent; }
@@ -58,14 +60,20 @@ public:
   virtual int rtti() const;
 
   void setParent(SafeGroup *parent);
+  const QString &name() const { return m_name; }
+  QString &name() { return m_name; }
+  virtual void setName(const QString &name);
 
 private:
   SafeGroup *m_parent;
   Safe *m_safe;
+  QString m_name;
 };
 
 class SafeGroup: public SafeItem
 {
+  Q_OBJECT;
+
 public:
   class Iterator
   {
@@ -91,15 +99,12 @@ public:
     Q3PtrListIterator<SafeItem> m_iter;
   };
 
-  static const int RTTI;
+  static const int RTTI = 1;
 
   SafeGroup(SafeGroup *parent, const QString &name = QString::null);
   virtual ~SafeGroup();
 
   virtual int rtti() const;
-
-  const QString &name() const { return m_name; }
-  void setName(const QString &name);
 
   void addItem(SafeItem *item);
   bool takeItem(SafeItem *item);
@@ -108,23 +113,29 @@ public:
 
   void empty();
   SafeItem *at(int i);
+  int index(const SafeItem *);
 
   Iterator first();
   Iterator last();
+
+signals:
+  void itemAdded(SafeItem *, SafeGroup *);
+  void itemPreAdd(SafeItem *, SafeGroup *);
 
 private:
   typedef Q3PtrList<SafeItem> ItemList;
   typedef Q3PtrListIterator<SafeItem> ItemListIterator;
 
-  QString m_name;
   ItemList m_items;
 };
 
 class SafeEntry: public SafeItem
 {
+  Q_OBJECT;
+
 public:
   static const char GroupSeperator = '/'; //!< group delimeter
-  static const int RTTI;
+  static const int RTTI = 2;
 
   SafeEntry(SafeGroup *parent);
   SafeEntry(SafeGroup *parent,
@@ -146,7 +157,6 @@ public:
   inline const QDateTime &accessTime() const { return m_access_time; }
   inline const QTime &lifetime() const { return m_life_time; }
 
-  inline const QString &name() const { return m_name; }
   inline const QString &user() const { return m_user; }
   inline const EncryptedString &password() const { return m_password; }
   inline const QString &notes() const { return m_notes; }
@@ -160,7 +170,7 @@ public:
   void setAccessTime(const QDateTime &t);
   void setLifetime(const QTime &t);
 
-  void setName(const QString &n);
+  virtual void setName(const QString &name);
   void setUser(const QString &u);
   void setPassword(const EncryptedString &p);
   void setPassword(const char *p);
@@ -176,11 +186,11 @@ private:
   unsigned char m_policy[4];
   QDateTime m_creation_time, m_mod_time, m_access_time;
   QTime m_life_time;
-  QString m_name, m_user, m_notes;
+  QString m_user, m_notes;
   EncryptedString m_password;
 };
 
-class Safe: public QObject, public SafeGroup
+class Safe: public SafeGroup
 {
   Q_OBJECT;
 
@@ -222,17 +232,22 @@ public:
   inline const EncryptedString getPassPhrase() const { return m_passphrase.get(); }
   void setPassPhrase(const EncryptedString &phrase);
 
+  bool deleteItem(SafeItem *);
+
   inline bool hasChanged() { return m_changed; }
   void setChanged(bool value);
 
   int totalNumEntries(const SafeGroup *group = NULL) const;
   int totalNumGroups(const SafeGroup *group = NULL) const;
 
+  void signalItemChanged(SafeItem *item);
+
 signals:
   void changed();
   void itemChanged(SafeItem *);
-  void itemAdded(SafeItem *, SafeGroup *);
-  void itemDeleted(SafeItem *, SafeGroup *);
+  //void itemAdded(SafeItem *, SafeGroup *);
+  void itemDeleted(SafeGroup *);
+  void itemPreDelete(SafeItem *, SafeGroup *);
   void saved();
   void loaded();
 

@@ -23,6 +23,7 @@
 #include "safe.hpp"
 #include "pwsafe/Util.h"
 #include "clipboard.hpp"
+#include "pwordeditdlg.hpp"
 
 int PwordEditDlg::gen_pword_length = 8;
 QString PwordEditDlg::default_user;
@@ -30,6 +31,12 @@ bool PwordEditDlg::generate_and_show = true;
 bool PwordEditDlg::generate_and_fetch = true;
 bool PwordEditDlg::generate_on_new = true;
 
+
+PwordEditDlg::PwordEditDlg(QWidget *parent)
+	: QDialog(parent)
+{
+	setupUi(this);
+}
 
 void PwordEditDlg::init()
 {
@@ -139,7 +146,7 @@ void PwordEditDlg::accept()
 		m_item->setNotes(getNotes());
 		m_item->updateModTime();
 
-		m_item->safe()->setChanged(true);
+		m_item->safe()->signalItemChanged(m_item);
 	}
 
 	accepted();

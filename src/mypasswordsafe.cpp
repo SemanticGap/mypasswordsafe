@@ -28,7 +28,6 @@
 #include <qmessagebox.h>
 #include <qinputdialog.h>
 #include <qsettings.h>
-#include <q3listview.h>
 #include <qdom.h>
 #include <qtimer.h>
 //Added by qt3to4:
@@ -36,18 +35,38 @@
 #include <QShowEvent>
 #include <QCloseEvent>
 #include "tools/idle/idle.h"
-#include "passphrasedlg.h"
-#include "pwordeditdlg.h"
-#include "manualdlg.h"
-#include "newpassphrasedlg.h"
+#include "passphrasedlg.hpp"
+#include "pwordeditdlg.hpp"
+#include "manualdlg.hpp"
+#include "newpassphrasedlg.hpp"
 #include "myutil.hpp"
 #include "safedragobject.hpp"
 #include "xmlserializer.hpp"
 #include "clipboard.hpp"
+#include "mypasswordsafe.hpp"
+#include "preferencesdlg.hpp"
+#include "aboutdlg.hpp"
 
 using namespace std;
 
 typedef Q3FileDialog MyFileDialog;
+
+MyPasswordSafe::MyPasswordSafe(QWidget *parent)
+	: QMainWindow(parent),
+	m_manual(this),
+	m_safe(NULL),
+	m_config(QSettings::UserScope, ORGNAME, APPNAME),
+	m_idle(NULL),
+	m_clipboard(NULL)
+{
+  setupUi(this);
+  init();
+}
+
+MyPasswordSafe::~MyPasswordSafe()
+{
+  destroy();
+}
 
 void MyPasswordSafe::init()
 {
@@ -58,6 +77,9 @@ void MyPasswordSafe::init()
   m_clipboard = Clipboard::instance();
   connect(editClearClipboardAction, SIGNAL(activated()), m_clipboard, SLOT(clear()));
   connect(m_clipboard, SIGNAL(cleared()), this, SLOT(clipboardCleared()));
+
+  connect(pwordTreeView, SIGNAL(activated(SafeItem *)), this, SLOT(passwordActivated(SafeItem *)));
+  connect(pwordTreeView, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(passwordMenuRequested(const QPoint &)));
 
   m_do_lock = false;
   savingEnabled(false);
@@ -79,7 +101,6 @@ void MyPasswordSafe::destroy()
 {
   delete m_idle;
 
-  // ask to save file if needed
   if(clearClipboardOnExit())
     m_clipboard->copy("");
 
@@ -92,6 +113,7 @@ void MyPasswordSafe::destroy()
 
 void MyPasswordSafe::closeEvent( QCloseEvent *e )
 {
+  // ask to save file if needed
   if(closeSafe()) {
     e->accept();
     emit quit();
@@ -266,8 +288,9 @@ bool MyPasswordSafe::open( const char *filename, const EncryptedString &passkey,
       DBGOUT(filename << " has " << s->count() << " entries");
 
       Safe *current_safe = m_safe;
+
       m_safe = s;
-      pwordListView->setSafe(m_safe);
+      pwordTreeView->setSafe(m_safe);
 
       if(current_safe != NULL)
 	delete current_safe;
@@ -347,7 +370,7 @@ bool MyPasswordSafe::saveAs()
 
 SafeGroup *MyPasswordSafe::getSelectedParent() const
 {
-    SafeItem *selection = pwordListView->getSelectedItem();
+    SafeItem *selection = pwordTreeView->getSelectedItem();
     SafeGroup *parent = m_safe;
 
     if(selection != NULL) {
@@ -366,12 +389,13 @@ bool MyPasswordSafe::createEditDialog(SafeEntry *entry)
 {
   // return false if we're already editing this item
   if(entry != NULL) {
-    for(PwordEditDlg *iter = m_children.first();
-	iter;
-	iter = m_children.next()) {
-      if(iter->getItem() == entry) {
-	iter->raise();
-	iter->setActiveWindow();
+    for(QList<PwordEditDlg *>::iterator iter = m_children.begin();
+	iter != m_children.end();
+	iter = iter++) {
+      PwordEditDlg *item = *iter;
+      if(item->getItem() == entry) {
+	item->raise();
+	item->setActiveWindow();
 	return false;
       }
     }
@@ -394,10 +418,10 @@ bool MyPasswordSafe::createEditDialog(SafeEntry *entry)
   return true;
 }
 
-bool MyPasswordSafe::removeEditDialog(const PwordEditDlg *dlg)
+bool MyPasswordSafe::removeEditDialog(PwordEditDlg *dlg)
 {
   // find and remove the dialog
-  return m_children.remove(dlg);
+  return m_children.removeOne(dlg);
 }
 
 void MyPasswordSafe::pwordAdd()
@@ -413,15 +437,15 @@ void MyPasswordSafe::pwordAdd()
 
 void MyPasswordSafe::editDialogAccepted()
 {
-  const PwordEditDlg *dlg = dynamic_cast<const PwordEditDlg *>(sender());
+  PwordEditDlg *dlg = dynamic_cast<PwordEditDlg *>(sender());
   DBGOUT("editDialogClosed: " << dlg->result());
 
   if(dlg->isNew()) {
-    pwordListView->itemAdded(dlg->getItem(), true);
+    pwordTreeView->itemAdded(dlg->getItem(), true);
     statusBar()->message(tr("Item added"));
   }
   else {
-    pwordListView->itemChanged(dlg->getItem());
+    pwordTreeView->itemChanged(dlg->getItem());
     statusBar()->message(tr("Password updated"));
   }
 
@@ -431,7 +455,7 @@ void MyPasswordSafe::editDialogAccepted()
 
 void MyPasswordSafe::editDialogRejected()
 {
-  const PwordEditDlg *dlg = dynamic_cast<const PwordEditDlg *>(sender());
+  PwordEditDlg *dlg = dynamic_cast<PwordEditDlg *>(sender());
 
   if(dlg->isNew()) {
     statusBar()->message(tr("Add canceled"));
@@ -447,14 +471,15 @@ void MyPasswordSafe::editDialogRejected()
 
 void MyPasswordSafe::pwordDelete()
 {
-  SafeItem *item(pwordListView->getSelectedItem());
-  if(item) {
+  //SafeItem *item(pwordTreeView->getSelectedItem());
+  QModelIndex index = pwordTreeView->currentIndex();
+  if(index.isValid()) {
     int result = QMessageBox::warning(this, tr("Are you sure?"),
 				      tr("Are you sure you want to delete this password?"),
 				      QMessageBox::Yes, QMessageBox::No);
     switch(result) {
     case QMessageBox::Yes:
-      deleteItem(item);
+      deleteItem(index);
       statusBar()->message(tr("Password deleted"));
       break;
     default:
@@ -468,18 +493,17 @@ void MyPasswordSafe::pwordDelete()
 }
 
 
-void MyPasswordSafe::deleteItem(SafeItem *item)
+void MyPasswordSafe::deleteItem(const QModelIndex &index)
 {
   DBGOUT("deleteItem");
-  m_safe->setChanged(true);
-  pwordListView->itemDeleted(item);
-  delete item;
+  //m_safe->deleteItem(item);
+  pwordTreeView->model()->removeRow(index.row(), index.parent());
   savingEnabled(true);
 }
 
 void MyPasswordSafe::pwordEdit()
 {
-  SafeItem *item = pwordListView->getSelectedItem();
+  SafeItem *item = pwordTreeView->getSelectedItem();
   if(item != NULL) {
     if(item->rtti() == SafeEntry::RTTI) {
       SafeEntry *entry = (SafeEntry *)item;
@@ -496,7 +520,7 @@ void MyPasswordSafe::pwordEdit()
 
 void MyPasswordSafe::pwordFetch()
 {
-  SafeItem *item = pwordListView->getSelectedItem();
+  SafeItem *item = pwordTreeView->getSelectedItem();
   if(item && item->rtti() == SafeEntry::RTTI) {
     SafeEntry *entry = (SafeEntry *)item;
     entry->updateAccessTime();
@@ -515,7 +539,7 @@ void MyPasswordSafe::pwordFetch()
 
 void MyPasswordSafe::pwordFetchUser()
 {
-  SafeItem *item = pwordListView->getSelectedItem();
+  SafeItem *item = pwordTreeView->getSelectedItem();
   if(item && item->rtti() == SafeEntry::RTTI) {
     SafeEntry *entry = (SafeEntry *)item;
     entry->updateAccessTime();
@@ -528,17 +552,15 @@ void MyPasswordSafe::pwordFetchUser()
   }
 }
 
-
-void MyPasswordSafe::onPwordListDblClicked(Q3ListViewItem *item)
+void MyPasswordSafe::passwordActivated(SafeItem *item)
 {
-  if(item->rtti() == SafeListViewEntry::RTTI)
+  if(item->rtti() == SafeEntry::RTTI)
     pwordFetch();
 }
 
-
-void MyPasswordSafe::onPwordListRightClk( Q3ListViewItem *, const QPoint &point, int)
+void MyPasswordSafe::passwordMenuRequested(const QPoint &point)
 {
-  PopupMenu->popup(point);
+  PopupMenu->popup(pwordTreeView->mapToGlobal(point));
 }
 
 
@@ -592,12 +614,6 @@ void MyPasswordSafe::setDefaultSafe(const QString &path)
 {
   m_default_safe = path;
 }
-
-const QString & MyPasswordSafe::getDefaultSafe()
-{
-  return m_default_safe;
-}
-
 
 bool MyPasswordSafe::browseForSafe( QString &filename, QString &filter, bool saving )
 {
@@ -672,7 +688,7 @@ void MyPasswordSafe::createNewSafe(const EncryptedString &passphrase)
   if(closeSafe()) {
     m_safe = new Safe();
     m_safe->setPassPhrase(passphrase);
-    pwordListView->setSafe(m_safe);
+    pwordTreeView->setSafe(m_safe);
     m_safe->setChanged(false);
     setCaption(tr("MyPasswordSafe: <untitled>"));
     savingEnabled(false);
@@ -714,19 +730,19 @@ void MyPasswordSafe::fileChangePassPhrase()
 
 void MyPasswordSafe::hideChildren()
 {
-    for(PwordEditDlg *iter = m_children.first();
-	iter;
-	iter = m_children.next()) {
-      iter->hide();
+    for(QList<PwordEditDlg *>::iterator iter = m_children.begin();
+	iter != m_children.end();
+	iter = iter++) {
+      (*iter)->hide();
     }
 }
 
 void MyPasswordSafe::showChildren()
 {
-    for(PwordEditDlg *iter = m_children.first();
-	iter;
-	iter = m_children.next()) {
-      iter->show();
+    for(QList<PwordEditDlg *>::iterator iter = m_children.begin();
+	iter != m_children.end();
+	iter = iter++) {
+      (*iter)->show();
     }
 }
 
@@ -769,7 +785,7 @@ void MyPasswordSafe::createGroup()
   }
 
   // get the selected item
-  SafeItem *item = pwordListView->getSelectedItem();
+  SafeItem *item = pwordTreeView->getSelectedItem();
   SafeGroup *parent = m_safe;
 
   // if there's an item selected
@@ -795,7 +811,7 @@ void MyPasswordSafe::createGroup()
   }
   else {
     m_safe->setChanged(true);
-    pwordListView->itemAdded(group, true);
+    pwordTreeView->itemAdded(group, true);
 
     savingEnabled(true);
     statusBar()->message(tr("Created the group \"%1\"").arg(group_name));
@@ -875,7 +891,7 @@ bool MyPasswordSafe::isMinimized() const
 #else
 bool MyPasswordSafe::isMinimized() const
 {
-  return Q3MainWindow::isMinimized();
+  return QMainWindow::isMinimized();
 }
 #endif
 
@@ -913,39 +929,34 @@ static const char *MyPS_Column_Fields[] = {
 
 void MyPasswordSafe::readConfig()
 {
-  m_config.setPath("SemanticGap.com", "MyPasswordSafe");
-  m_config.beginGroup("/MyPasswordSafe");
+  m_config.beginGroup("MyPasswordSafe");
 
-  m_first_time = m_config.readBoolEntry("/prefs/first_time", true);
-  PwordEditDlg::gen_pword_length = m_config.readNumEntry("/prefs/password_length", 8);
+  m_first_time = m_config.value("prefs/first_time", true).toBool();
+  PwordEditDlg::gen_pword_length = m_config.value("prefs/password_length", 8).toInt();
   
-  m_default_safe = m_config.readEntry("/prefs/default_safe", "");
+  m_default_safe = m_config.value("prefs/default_safe", "").toString();
   if(m_default_safe.isEmpty())
     fileOpenDefaultAction->setEnabled(false);
   
-  PwordEditDlg::default_user = m_config.readEntry("/prefs/default_username", "");
-  setClearClipboardOnExit(m_config.readBoolEntry("/prefs/clear_clipboard", true));
-  setLockOnMinimize(m_config.readBoolEntry("/prefs/lock_on_minimize", true));
-  PwordEditDlg::setGenerateAndShow(m_config.readBoolEntry("/prefs/generate/show", true));
-  PwordEditDlg::setGenerateAndFetch(m_config.readBoolEntry("/prefs/generate/fetch", true));
-  PwordEditDlg::setGenerateOnNew(m_config.readBoolEntry("/prefs/generate/on_new", true));
+  PwordEditDlg::default_user = m_config.value("prefs/default_username", "").toString();
+  setClearClipboardOnExit(m_config.value("prefs/clear_clipboard", true).toBool());
+  setLockOnMinimize(m_config.value("prefs/lock_on_minimize", true).toBool());
+  PwordEditDlg::setGenerateAndShow(m_config.value("prefs/generate/show", true).toBool());
+  PwordEditDlg::setGenerateAndFetch(m_config.value("prefs/generate/fetch", true).toBool());
+  PwordEditDlg::setGenerateOnNew(m_config.value("prefs/generate/on_new", true).toBool());
   
-  m_max_tries = m_config.readNumEntry("/prefs/max_tries", 3);
+  m_max_tries = m_config.value("prefs/max_tries", 3).toInt();
   if(m_max_tries > 10)
     m_max_tries = 10;
   
-  m_idle_timeout = m_config.readNumEntry("/prefs/idle_timeout", 2); // 2 minute default
-  setClearTimeOut(m_config.readNumEntry("/prefs/clear_timeout", 60)); // 1 minute default
+  m_idle_timeout = m_config.value("prefs/idle_timeout", 2).toInt(); // 2 minute default
+  setClearTimeOut(m_config.value("prefs/clear_timeout", 60).toInt()); // 1 minute default
 
-  int w, h;
-  w = m_config.readNumEntry("/MainWindow/width", 400);
-  h = m_config.readNumEntry("/MainWindow/height", 320);
-  resize(QSize(w, h));
-    
-  w = m_config.readNumEntry("/MainWindow/left", -1);
-  h = m_config.readNumEntry("/MainWindow/top", -1);
-  if(w != -1 && h != -1) {
-    move(w, h);
+  resize(m_config.value("MainWindow/size", QSize(400, 320)).toSize());
+
+  QVariant pos = m_config.value("MainWindow/position");
+  if(!pos.isNull()) {
+    move(pos.toPoint());
   }
 
   for(int i = 0; MyPS_Column_Fields[i] != NULL; i++) {
@@ -957,41 +968,43 @@ void MyPasswordSafe::readConfig()
 
 void MyPasswordSafe::readColumnWidth(int col, const char *name)
 {
+/*
   int w = m_config.readNumEntry(name, -1);
   if(w > -1)
-    pwordListView->setColumnWidth(col, w);
+    pwordTreeView->setColumnWidth(col, w);
+*/
 }
 
 void MyPasswordSafe::writeColumnWidth(int col, const char *name)
 {
-  m_config.writeEntry(name, pwordListView->columnWidth(col));
+//  m_config.writeEntry(name, pwordTreeView->columnWidth(col));
 }
 
 void MyPasswordSafe::writeConfig()
 {
   // save config settings   
-  m_config.beginGroup("/MyPasswordSafe");
+  m_config.beginGroup("MyPasswordSafe");
 
-  m_config.writeEntry("/prefs/first_time", false);
-  m_config.writeEntry("/prefs/password_length", (int)PwordEditDlg::gen_pword_length);
-  m_config.writeEntry("/prefs/default_safe", m_default_safe);
-  m_config.writeEntry("/prefs/default_username", PwordEditDlg::default_user);
-  m_config.writeEntry("/prefs/generate/show", PwordEditDlg::generateAndShow());
-  m_config.writeEntry("/prefs/generate/fetch", PwordEditDlg::generateAndFetch());
-  m_config.writeEntry("/prefs/generate/on_new", PwordEditDlg::generateOnNew());
-  m_config.writeEntry("/prefs/clear_clipboard", clearClipboardOnExit());
-  m_config.writeEntry("/prefs/lock_on_minimize", lockOnMinimize());
-  m_config.writeEntry("/prefs/max_tries", m_max_tries);
-  m_config.writeEntry("/prefs/idle_timeout", m_idle_timeout);
-  m_config.writeEntry("/prefs/clear_timeout", (int)clearTimeOut());
+  m_config.setValue("prefs/first_time", false);
+  m_config.setValue("prefs/password_length", (int)PwordEditDlg::gen_pword_length);
+  m_config.setValue("prefs/default_safe", m_default_safe);
+  m_config.setValue("prefs/default_username", PwordEditDlg::default_user);
+  m_config.setValue("prefs/generate/show", PwordEditDlg::generateAndShow());
+  m_config.setValue("prefs/generate/fetch", PwordEditDlg::generateAndFetch());
+  m_config.setValue("prefs/generate/on_new", PwordEditDlg::generateOnNew());
+  m_config.setValue("prefs/clear_clipboard", clearClipboardOnExit());
+  m_config.setValue("prefs/lock_on_minimize", lockOnMinimize());
+  m_config.setValue("prefs/max_tries", m_max_tries);
+  m_config.setValue("prefs/idle_timeout", m_idle_timeout);
+  m_config.setValue("prefs/clear_timeout", (int)clearTimeOut());
 
   QSize sz = size();
-  m_config.writeEntry("/MainWindow/width", sz.width());
-  m_config.writeEntry("/MainWindow/height", sz.height());
+  m_config.setValue("MainWindow/width", sz.width());
+  m_config.setValue("MainWindow/height", sz.height());
 
   QPoint position = pos();
-  m_config.writeEntry("/MainWindow/left", position.x());
-  m_config.writeEntry("/MainWindow/top", position.y());
+  m_config.setValue("MainWindow/left", position.x());
+  m_config.setValue("MainWindow/top", position.y());
 
   for(int i = 0; MyPS_Column_Fields[i] != NULL; i++) {
     writeColumnWidth(i, MyPS_Column_Fields[i]);
@@ -1000,7 +1013,7 @@ void MyPasswordSafe::writeConfig()
   m_config.endGroup();
 }
 
-
+/*
 void MyPasswordSafe::dragObjectDropped(QMimeSource *drag, SafeListViewItem *target)
 {
   DBGOUT("dragObjectDropped");
@@ -1030,13 +1043,13 @@ void MyPasswordSafe::dragObjectDropped(QMimeSource *drag, SafeListViewItem *targ
 	if(tag_name == "item") {
 	  SafeEntry *entry = new SafeEntry(safe_parent);
 	  if(XmlSerializer::safeEntryFromXml(elem, entry)) {
-	    pwordListView->itemAdded(entry);
+	    pwordTreeView->itemAdded(entry);
 	  }
 	}
 	else if(tag_name == "group") {
 	  SafeGroup *group = new SafeGroup(safe_parent);
 	  if(XmlSerializer::safeGroupFromXml(elem, group))
-	    pwordListView->itemAdded(group);
+	    pwordTreeView->itemAdded(group);
 	}
       }
     }
@@ -1044,12 +1057,7 @@ void MyPasswordSafe::dragObjectDropped(QMimeSource *drag, SafeListViewItem *targ
     m_safe->setChanged(true);
   }
 }
-
-bool MyPasswordSafe::firstTime() const
-{
-  return m_first_time;
-}
-
+*/
 
 void MyPasswordSafe::clipboardCleared()
 {
@@ -1082,7 +1090,7 @@ void MyPasswordSafe::slotSecondsIdle(int secs)
 
 void MyPasswordSafe::checkMinimization()
 {
-  DBGOUT("isMinimized: " << (isMinimized() == Q3MainWindow::isMinimized()));
+  DBGOUT("isMinimized: " << (isMinimized() == QMainWindow::isMinimized()));
   if(lockOnMinimize()) {
     m_do_lock = isMinimized();
   }

@@ -17,12 +17,18 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include "passphrasedlg.hpp"
+
+PassPhraseDlg::PassPhraseDlg(QWidget *parent)
+	: QDialog(parent)
+{
+	setupUi(this);
+}
 
 const QString PassPhraseDlg::getText() const
 {
     return pwordBox->text();
 }
-
 
 void PassPhraseDlg::pwordBox_textChanged( const QString &text )
 {

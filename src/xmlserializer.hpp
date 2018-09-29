@@ -22,7 +22,7 @@
 #include "safeserializer.hpp"
 
 class Safe;
-enum Safe::Error;
+typedef enum Safe::Error;
 class EncryptedString;
 class SecuredString;
 

@@ -11,6 +11,14 @@ endif
 QMAKE=qmake
 DATE=$(shell date +%Y%m%d)
 VERSION=0.6.7
+APPNAME=MyPasswordSafe
+ORGNAME=SemanticGap
+ORGDOMAIN=SemanticGap.com
+
+ifdef DEBUG
+	APPNAME=MyPasswordSafe-Debug
+endif
+
 ifndef USER
 	# get the user's name from the environment
 	USER=$(USER)
@@ -46,6 +54,9 @@ src/config.h:
 	echo "#define CONFIG_H" >> src/config.h
 	echo "#define PREFIX \"$(PREFIX)\"" >> src/config.h
 	echo "#define VERSION \"$(VERSION)\"" >> src/config.h
+	echo "#define APPNAME \"$(APPNAME)\"" >> src/config.h
+	echo "#define ORGNAME \"$(ORGNAME)\"" >> src/config.h
+	echo "#define ORGDOMAIN \"$(ORGDOMAIN)\"" >> src/config.h
 	echo "#define COMP_DATE \"$(DATE)\"" >> src/config.h
 	echo "#define COMP_USER \"$(USER)\"" >> src/config.h
 	echo "#define COMP_HOST \"$(HOST)\"" >> src/config.h
