@@ -2,7 +2,8 @@ TEMPLATE	= app
 LANGUAGE	= C++
 ICON            = images/keys.icns
 
-CONFIG	+= qt warn_on widgets
+CONFIG	+= qt warn_on
+QT += widgets
 
 LIBS	+= uuid-1.0.0/.libs/libuuid.a
 INCLUDEPATH	+= uuid-1.0.0 src

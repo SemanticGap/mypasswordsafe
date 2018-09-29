@@ -20,7 +20,6 @@
 #include <qapplication.h>
 #include <qtranslator.h>
 #include <qtextcodec.h>
-#include <qmime.h>
 #include <qimage.h>
 #include "config.h"
 #include "safe.hpp"
