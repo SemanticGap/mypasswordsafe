@@ -83,15 +83,13 @@ QVariant SafeTreeModel::headerData(int section, Qt::Orientation orientation, int
 
 int SafeTreeModel::rowCount(const QModelIndex &parent) const
 {
-	DBGOUT("row count " << parent.row() << " " << parent.column() << " " << (size_t)parent.internalPointer());
-
 	if(parent.isValid()) {
 		SafeGroup *item = (SafeGroup *)parent.internalPointer();
-		if(item != NULL && item->rtti() == SafeGroup::RTTI) {
+		if(item->rtti() == SafeGroup::RTTI) {
 			DBGOUT("row count group " << (size_t)item << " " << item->count());
 			return item->count();
 		} else {
-			DBGOUT("row count item " << (size_t)item);
+			DBGOUT("row count item " << (size_t)item << " " << item->count());
 			return 0;
 		}
 	} else {

@@ -101,6 +101,7 @@ public:
     inline SafeItem *operator--() { return prev(); }
 
     inline bool operator==(const Iterator &other) const { return m_iter == other.m_iter; }
+    inline bool operator==(SafeGroup::ItemList::const_iterator &other) const { return m_iter == other; }
     inline bool operator!=(const Iterator &other) const { return m_iter != other.m_iter; }
 
   private:

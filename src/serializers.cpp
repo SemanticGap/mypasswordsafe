@@ -331,7 +331,7 @@ Safe::Error BlowfishLizer::save(Safe &safe, const QString &path, const QString &
   FILE *out = fopen(path.toUtf8(), "wb");
   const EncryptedString &passphrase(safe.getPassPhrase());
 
-  DBGOUT("Saving " << path.toAscii().data());
+  DBGOUT("Saving " << path.toStdString());
 
   if(out == NULL) {
     return Safe::BadFile;
@@ -500,7 +500,7 @@ Safe::Error BlowfishLizer2::load(Safe &safe, const QString &path,
   // read in the format header
   numread = BlowfishLizer::readEntry(in, *item, fish.get(), ipthing, def_user);
 
-  DBGOUT("Name: \"" << item->name().toAscii().data() << "\"");
+  DBGOUT("Name: \"" << item->name().toStdString() << "\"");
   DBGOUT("pword: " << item->password().get().get());
 
   const QString pwsafe2_header(FormatName);
@@ -516,7 +516,7 @@ Safe::Error BlowfishLizer2::load(Safe &safe, const QString &path,
     item = new SafeEntry(&safe);
     group = "";
     numread = readEntry(in, *item, group, fish, ipthing, def_user);
-    DBGOUT("Read: " << item->name().toAscii().data() << " in " << group.toAscii().data());
+    DBGOUT("Read: " << item->name().toStdString() << " in " << group.toStdString());
 
     if(numread > 0) {
       if(!group.isEmpty()) {
@@ -541,7 +541,7 @@ Safe::Error BlowfishLizer2::save(Safe &safe, const QString &path, const QString 
   FILE *out = fopen(path.toUtf8(), "wb");
   const EncryptedString &passphrase(safe.getPassPhrase());
 
-  DBGOUT("Saving " << path.toAscii().data());
+  DBGOUT("Saving " << path.toStdString());
 
   if(out == NULL) {
     return Safe::BadFile;
@@ -617,7 +617,7 @@ Safe::Error BlowfishLizer2::saveGroup(FILE *out, SafeGroup *group, CryptoInterfa
   while(iter != group->last()) {
     item = iter.current();
     if(item->rtti() == SafeEntry::RTTI) {
-      DBGOUT("Item name: " << ((SafeEntry *)item)->name().toAscii().data());
+      DBGOUT("Item name: " << ((SafeEntry *)item)->name().toStdString());
       if(writeEntry(out, *(SafeEntry *)item, fish, ipthing, def_user) == 0) {
 	return Safe::IOError;
       }
@@ -710,7 +710,7 @@ QString BlowfishLizer2::readyGroup(const QString &group)
     }
   }
 
-  DBGOUT("\"" << group.toAscii().data() << "\" = \"" << ret.toAscii().data() << "\"");
+  DBGOUT("\"" << group.toStdString() << "\" = \"" << ret.toStdString() << "\"");
   return ret;
 }
 
@@ -756,7 +756,7 @@ int BlowfishLizer2::readEntry(FILE *in, SafeEntry &item, QString &group,
     case UUID_BLOCK: {
       const unsigned char *uuid_array = (const unsigned char *)data.get();
       UUID uuid(uuid_array);
-      DBGOUT("UUID: " << uuid.toString().toAscii().data());
+      DBGOUT("UUID: " << uuid.toString().toStdString());
       item.setUUID(uuid);
     } break;
     case GROUP: {
@@ -799,7 +799,7 @@ int BlowfishLizer2::readEntry(FILE *in, SafeEntry &item, QString &group,
     DBGOUT("UUID isNil");
     item.setUUID(UUID(true));
   }
-  DBGOUT("Item UUID: " << item.uuid().toString().toAscii().data());
+  DBGOUT("Item UUID: " << item.uuid().toString().toStdString());
 
   DBGOUT("END: " << num_read);
 

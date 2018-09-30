@@ -103,8 +103,6 @@ void MyPasswordSafe::destroy()
   if(clearClipboardOnExit())
     m_clipboard->copy("");
 
-  writeConfig();
-
   if(m_safe)
     delete m_safe;
 }
@@ -115,6 +113,7 @@ void MyPasswordSafe::closeEvent( QCloseEvent *e )
   // ask to save file if needed
   if(closeSafe()) {
     e->accept();
+    writeConfig();
     emit quit();
   }
 }
@@ -943,6 +942,7 @@ void MyPasswordSafe::readConfig()
   PwordEditDlg::default_user = m_config.value("prefs/default_username", "").toString();
   setClearClipboardOnExit(m_config.value("prefs/clear_clipboard", true).toBool());
   setLockOnMinimize(m_config.value("prefs/lock_on_minimize", true).toBool());
+
   PwordEditDlg::setGenerateAndShow(m_config.value("prefs/generate/show", true).toBool());
   PwordEditDlg::setGenerateAndFetch(m_config.value("prefs/generate/fetch", true).toBool());
   PwordEditDlg::setGenerateOnNew(m_config.value("prefs/generate/on_new", true).toBool());
@@ -954,12 +954,8 @@ void MyPasswordSafe::readConfig()
   m_idle_timeout = m_config.value("prefs/idle_timeout", 2).toInt(); // 2 minute default
   setClearTimeOut(m_config.value("prefs/clear_timeout", 60).toInt()); // 1 minute default
 
-  resize(m_config.value("MainWindow/size", QSize(400, 320)).toSize());
-
-  QVariant pos = m_config.value("MainWindow/position");
-  if(!pos.isNull()) {
-    move(pos.toPoint());
-  }
+  restoreGeometry(m_config.value("MainWindow/geometry").toByteArray());
+  restoreState(m_config.value("MainWindow/state").toByteArray());
 
   for(int i = 0; MyPS_Column_Fields[i] != NULL; i++) {
     readColumnWidth(i, MyPS_Column_Fields[i]);
@@ -1000,13 +996,8 @@ void MyPasswordSafe::writeConfig()
   m_config.setValue("prefs/idle_timeout", m_idle_timeout);
   m_config.setValue("prefs/clear_timeout", (int)clearTimeOut());
 
-  QSize sz = size();
-  m_config.setValue("MainWindow/width", sz.width());
-  m_config.setValue("MainWindow/height", sz.height());
-
-  QPoint position = pos();
-  m_config.setValue("MainWindow/left", position.x());
-  m_config.setValue("MainWindow/top", position.y());
+  m_config.setValue("MainWindow/geometry", saveGeometry());
+  m_config.setValue("MainWindow/state", saveState());
 
   for(int i = 0; MyPS_Column_Fields[i] != NULL; i++) {
     writeColumnWidth(i, MyPS_Column_Fields[i]);
