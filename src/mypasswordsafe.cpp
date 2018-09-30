@@ -30,7 +30,7 @@
 #include <qsettings.h>
 #include <qdom.h>
 #include <qtimer.h>
-//Added by qt3to4:
+#include <QWhatsThis>
 #include <QHideEvent>
 #include <QShowEvent>
 #include <QCloseEvent>
@@ -739,6 +739,11 @@ void MyPasswordSafe::showChildren()
 	iter = iter++) {
       (*iter)->show();
     }
+}
+
+void MyPasswordSafe::whatsThis()
+{
+  QWhatsThis::enterWhatsThisMode();
 }
 
 void MyPasswordSafe::lock()

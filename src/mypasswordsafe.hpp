@@ -82,6 +82,7 @@ public slots:
 	void hideChildren();
 	void showChildren();
 	void lock();
+	void whatsThis();
 	void createGroup();
 	bool clearClipboardOnExit() const;
 	void setClearClipboardOnExit(bool yes);
