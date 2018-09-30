@@ -123,8 +123,8 @@ public:
   SafeItem *at(int i);
   int index(SafeItem *) const;
 
-  Iterator first();
-  Iterator last();
+  Iterator first() const;
+  Iterator last() const;
 
 signals:
   void itemAdded(SafeItem *, SafeGroup *);
@@ -202,6 +202,7 @@ class Safe: public SafeGroup
 public:
   typedef vector<SafeEntry *> ItemList; //!< Container for the items
   typedef ItemList::iterator iterator; //!< Iterator shortcut
+  typedef ItemList::const_iterator const_iterator; //!< Iterator shortcut
 
   Safe();
   virtual ~Safe();

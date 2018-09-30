@@ -128,8 +128,8 @@ QDomElement XmlSerializer::safeGroupToXml(QDomDocument &doc, const SafeGroup &gr
   if(!group.name().isEmpty())
     e.setAttribute("name", group.name());
 
-  SafeGroup::Iterator it(&group);
-  while(it.current()) {
+  SafeGroup::Iterator it(group.first());
+  while(it != group.last()) {
     SafeItem *item = it.current();
     if(item->rtti() != -1) {
       QDomElement child;
@@ -222,7 +222,7 @@ bool XmlSerializer::safeEntryFromXml(const QDomElement &root, SafeEntry *entry)
 	// quietly ignore unknown elements
 #ifdef DEBUG
 	else {
-	  DBGOUT("Unknown element in item: " << (const char *)tagname);
+	  DBGOUT("Unknown element in item: " << tagname.toStdString());
 	}
 #endif
       }
@@ -264,7 +264,7 @@ bool XmlSerializer::safeGroupFromXml(const QDomElement &elem, SafeGroup *group,
 	// quietly ignore unknown items
 #ifdef DEBUG
 	else {
-	  DBGOUT("Unknown element: " << (const char *)item.tagName());
+	  DBGOUT("Unknown element: " << item.tagName().toStdString());
 	}
 #endif
       }

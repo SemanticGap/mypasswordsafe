@@ -553,7 +553,7 @@ void MyPasswordSafe::pwordFetchUser()
 
 void MyPasswordSafe::passwordActivated(SafeItem *item)
 {
-  if(item->rtti() == SafeEntry::RTTI)
+  if(item != NULL && item->rtti() == SafeEntry::RTTI)
     pwordFetch();
 }
 

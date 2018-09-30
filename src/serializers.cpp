@@ -256,7 +256,7 @@ int BlowfishLizer::readEntry(FILE *in, SafeEntry &item,
       //trimRight(name_user[0]);
       tempdata = name_user[0];
       //tempdata.truncate(tempdata.length() - 1);
-      DBGOUT("\"" << tempdata.data() << "\"\t\"" << name_user[0].toAscii().data() << "\"");
+      DBGOUT("\"" << tempdata.data() << "\"\t\"" << (const char *)name_user[0] << "\"");
       item.setName(tempdata);
 
       //trimLeft(name_user[1]);
@@ -391,10 +391,10 @@ Safe::Error BlowfishLizer::save(Safe &safe, const QString &path, const QString &
 
 Safe::Error BlowfishLizer::saveGroup(FILE *out, SafeGroup *group, CryptoInterface *fish, unsigned char *ipthing, const QString &def_user)
 {
-  SafeGroup::Iterator iter(group);
+  SafeGroup::Iterator iter(group->first());
   SafeItem *item = NULL;
   
-  while(iter.current()) {
+  while(iter != group->last()) {
     item = iter.current();
     if(item->rtti() == SafeEntry::RTTI) {
       if(writeEntry(out, *(SafeEntry *)item, fish, ipthing, def_user) == 0) {
@@ -611,10 +611,10 @@ Safe::Error BlowfishLizer2::save(Safe &safe, const QString &path, const QString 
 Safe::Error BlowfishLizer2::saveGroup(FILE *out, SafeGroup *group, CryptoInterface *fish,
 				      unsigned char *ipthing, const QString &def_user)
 {
-  SafeGroup::Iterator iter(group);
+  SafeGroup::Iterator iter(group->first());
   SafeItem *item = NULL;
 
-  while(iter.current()) {
+  while(iter != group->last()) {
     item = iter.current();
     if(item->rtti() == SafeEntry::RTTI) {
       DBGOUT("Item name: " << ((SafeEntry *)item)->name().toAscii().data());

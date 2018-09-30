@@ -274,13 +274,13 @@ int SafeGroup::index(SafeItem *item) const
   return m_items.indexOf(item, 0);
 }
 
-SafeGroup::Iterator SafeGroup::first()
+SafeGroup::Iterator SafeGroup::first() const
 {
   Iterator i(m_items.begin());
   return i;
 }
 
-SafeGroup::Iterator SafeGroup::last()
+SafeGroup::Iterator SafeGroup::last() const
 {
   Iterator i(m_items.end());
   return i;
@@ -792,10 +792,10 @@ int Safe::totalNumItems(const SafeGroup *group, int type) const
     group = this;
   }
 
-  SafeGroup::Iterator it(group);
+  SafeGroup::Iterator it(group->first());
   int count = 0;
 
-  while(it.current()) {
+  while(it != group->last()) {
     SafeItem *item = *it;
     if(item->rtti() == type) {
       count++;
