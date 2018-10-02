@@ -54,12 +54,13 @@ public:
   inline SafeGroup *parent() { return m_parent; }
   inline const SafeGroup *parent() const { return m_parent; }
 
+  void setSafe(Safe *safe) { m_safe = safe; }
   inline Safe *safe() { return m_safe; }
   inline const Safe *safe() const { return m_safe; }
 
   virtual int rtti() const;
 
-  void setParent(SafeGroup *parent);
+  virtual void setParent(SafeGroup *parent, bool from_parent = false);
   const QString &name() const { return m_name; }
   QString &name() { return m_name; }
   virtual void setName(const QString &name);
@@ -115,6 +116,7 @@ public:
 
   virtual int rtti() const;
 
+  virtual void setParent(SafeGroup *parent, bool from_parent = false);
   void addItem(SafeItem *item);
   bool takeItem(SafeItem *item);
 

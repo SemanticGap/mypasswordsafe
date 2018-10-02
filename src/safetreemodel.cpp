@@ -19,11 +19,14 @@ SafeTreeModel::~SafeTreeModel()
 
 Qt::ItemFlags SafeTreeModel::flags(const QModelIndex &index) const
 {
-	if(index.isValid())
-		//return QAbstractItemModel::flags(index);
-		return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+	if(index.isValid()) {
+		Qt::ItemFlags f = Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled;
+		//SafeItem *i = (SafeItem *)index.internalPointer();
+		f |= Qt::ItemIsDropEnabled;
+		return f;
+	}
 	else
-		return 0;
+		return QAbstractItemModel::flags(index);
 }
 
 QVariant SafeTreeModel::data(const QModelIndex &index, int role) const
@@ -31,12 +34,13 @@ QVariant SafeTreeModel::data(const QModelIndex &index, int role) const
 	if(role == Qt::SizeHintRole)
 		return QVariant(QSize(100, 20));
 
-	if(!index.isValid())
+	SafeItem *i = (SafeItem *)index.internalPointer();
+	if(!index.isValid()) i = m_safe;
+
+	if(i == NULL)
 		return QVariant();
 
-	SafeItem *i = (SafeItem *)index.internalPointer();
-
-	if(role == Qt::DecorationRole) {
+	if(role == Qt::DecorationRole && index.column() == 0) {
 		switch(i->rtti()) {
 		case SafeEntry::RTTI:
 			return QIcon(":/images/password.png");
@@ -46,17 +50,30 @@ QVariant SafeTreeModel::data(const QModelIndex &index, int role) const
 			break;
 		}		
 	} else if(role == Qt::DisplayRole) {
-		if(i->rtti() == SafeEntry::RTTI) {
+		if(i == m_safe) {
+			switch(index.column()) {
+			case 0:
+				return QVariant(m_safe->getPath());
+			}
+		} else if(i->rtti() == SafeEntry::RTTI) {
 			SafeEntry *e = (SafeEntry *)i;
 			//DBGOUT("data entry " << role << " " << e->name().toStdString() << " " << index.row() << " " << index.column());
-			if(index.column() == 0) {
+			switch(index.column()) {
+			case 0:
 				return QVariant(e->name());
+			case 1: return QVariant(QString("%1 %2").arg(index.row()).arg(index.column()));
+			case 2: return QVariant(parent(index).row());
+			case 3: return QVariant(flags(index));
 			}
 		} else if(i->rtti() == SafeGroup::RTTI) {
 			SafeGroup *e = (SafeGroup *)i;
 			//DBGOUT("data group " << role << " " << e->name().toStdString() << " " << index.row() << " " << index.column());
-			if(index.column() == 0) {
+			switch(index.column()) {
+			case 0:
 				return QVariant(e->name());
+			case 1: return QVariant(QString("%1 %2").arg(index.row()).arg(index.column()));
+			case 2: return QVariant(parent(index).row());
+			case 3: return QVariant(flags(index));
 			}
 		}
 	}
@@ -73,8 +90,11 @@ QVariant SafeTreeModel::headerData(int section, Qt::Orientation orientation, int
 	//DBGOUT("Header " << orientation << " " << section);
 
 	if(orientation == Qt::Horizontal) {
-		if(section == 0) {
-			return QVariant(tr("Name"));
+		switch(section) {
+		case 0: return QVariant(tr("Name"));
+		case 1: return QVariant(tr("Position"));
+		case 2: return QVariant(tr("Parent"));
+		case 3: return QVariant(tr("Flags"));
 		}
 	}
 
@@ -83,13 +103,15 @@ QVariant SafeTreeModel::headerData(int section, Qt::Orientation orientation, int
 
 int SafeTreeModel::rowCount(const QModelIndex &parent) const
 {
+	DBGOUT("row count " << parent.row() << " " << parent.column() << " " << (size_t)parent.internalPointer() << " " << parent.isValid() << " " << parent.parent().row());
 	if(parent.isValid()) {
-		SafeGroup *item = (SafeGroup *)parent.internalPointer();
-		if(item->rtti() == SafeGroup::RTTI) {
-			DBGOUT("row count group " << (size_t)item << " " << item->count());
-			return item->count();
+		SafeItem *item = (SafeItem *)parent.internalPointer();
+		if(item != NULL && item->rtti() == SafeGroup::RTTI) {
+			SafeGroup *grp = (SafeGroup *)item;
+			DBGOUT("row count group " << (size_t)grp << " " << grp->count());
+			return grp->count();
 		} else {
-			DBGOUT("row count item " << (size_t)item << " " << item->count());
+			DBGOUT("row count item " << (size_t)item);
 			return 0;
 		}
 	} else {
@@ -100,15 +122,15 @@ int SafeTreeModel::rowCount(const QModelIndex &parent) const
 
 int SafeTreeModel::columnCount(const QModelIndex &index) const
 {
-	return 1;
+	return 4;
 }
 
-QModelIndex SafeTreeModel::index(SafeItem *item) const
+QModelIndex SafeTreeModel::index(SafeItem *item, int column) const
 {
-	if(item != NULL) {
+	if(item != NULL && item != m_safe) {
 		SafeGroup *parent = item->parent();
 		if(parent != NULL) {
-			return createIndex(parent->index(item), 0, item);
+			return createIndex(parent->index(item), column, item);
 		}
 	}
 
@@ -117,12 +139,22 @@ QModelIndex SafeTreeModel::index(SafeItem *item) const
 
 QModelIndex SafeTreeModel::index(int row, int col, const QModelIndex &parent) const
 {
-	DBGOUT("Index " << row << " " << col << " " << parent.isValid() << " " << parent.row() << " " << parent.column() << " " << (size_t)parent.internalPointer());
-	SafeGroup *grp = (SafeGroup *)parent.internalPointer();
-	if(!parent.isValid() || grp == NULL) grp = m_safe;
+	DBGOUT("Index " << row << " " << col << "\tparent " << parent.isValid() << " " << parent.row() << " " << parent.column() << " " << (size_t)parent.internalPointer());
+	SafeItem *parent_item;
+	if(parent.isValid())
+		parent_item = static_cast<SafeItem *>(parent.internalPointer());
+	else
+		parent_item = m_safe;
 
-	DBGOUT("   group index " << row << " " << (size_t)grp->at(row));
-	return createIndex(row, col, grp->at(row));
+	if(parent_item == NULL || parent_item->rtti() != SafeGroup::RTTI) return QModelIndex();
+
+	SafeGroup *grp = static_cast<SafeGroup *>(parent_item);
+	SafeItem *item = grp->at(row);
+	DBGOUT("   group index " << row << " " << (size_t)item);
+	if(item != NULL)
+		return createIndex(row, col, item);
+	else
+		return QModelIndex();
 }
 
 QModelIndex SafeTreeModel::parent(const QModelIndex &index) const
@@ -130,10 +162,8 @@ QModelIndex SafeTreeModel::parent(const QModelIndex &index) const
 	DBGOUT("parent " << index.row() << " " << index.column());
 	if(index.isValid()) {
 		SafeItem *item = static_cast<SafeItem *>(index.internalPointer());
-		if(item != NULL && item->parent() != NULL) {
+		if(item != NULL && item != m_safe) {
 			return this->index(item->parent());
-		} else {
-			return this->index(m_safe);
 		}
 	}
 
@@ -156,18 +186,30 @@ bool SafeTreeModel::hasChildren(const QModelIndex &parent) const
 void SafeTreeModel::itemPreAdd(SafeItem *item, SafeGroup *parent)
 {
 	emit layoutAboutToBeChanged();
+	//int i = parent->index(item);
+	//emit rowsAboutToBeInserted(index(parent), i, i);
 }
 
 void SafeTreeModel::itemAdded(SafeItem *item, SafeGroup *parent)
 {
+#if QT_VERSION >= 0x050000
+	//QList<QPersistentModelIndex> parents;
+	//parents << index(parent);
+	//parents << index(item);
+	//emit layoutChanged(parents, VerticalSortHint);
 	emit layoutChanged();
+#else
+	emit layoutChanged();
+	//QModelIndex i = index(item);
+	//emit dataChanged(i, i);
+#endif
 }
 
 void SafeTreeModel::itemChanged(SafeItem *item)
 {
   DBGOUT("item changed " << (size_t)item);
   QModelIndex index = this->index(item);
-  emit dataChanged(index, index);
+  emit dataChanged(index, this->index(item, columnCount(index)));
 }
 
 bool SafeTreeModel::removeRows(int position, int rows, const QModelIndex &parent)

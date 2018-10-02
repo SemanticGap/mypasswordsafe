@@ -16,6 +16,7 @@ public:
 public slots:
 	void setCurrentPage( int page );
 	int currentPage() const;
+	void aboutQtPressed();
 };
 
 #endif

@@ -1,3 +1,4 @@
+#include <QMessageBox>
 #include "config.h"
 #include "aboutdlg.hpp"
 
@@ -21,6 +22,8 @@ void AboutDlg::init()
 	text.replace("{HOST}", COMP_HOST);
 	text.replace("{DATE}", COMP_DATE);
 	infoText->setHtml(text);
+
+	connect(aboutQtButton, SIGNAL(pressed()), this, SLOT(aboutQtPressed()));
 }
 
 void AboutDlg::setCurrentPage(int page)
@@ -31,4 +34,9 @@ void AboutDlg::setCurrentPage(int page)
 int AboutDlg::currentPage() const
 {
 	return tabWidget2->currentIndex();
+}
+
+void AboutDlg::aboutQtPressed()
+{
+	QMessageBox::aboutQt(this, tr("About Qt"));
 }

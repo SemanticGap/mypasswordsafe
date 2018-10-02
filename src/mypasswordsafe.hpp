@@ -67,6 +67,7 @@ public slots:
 	void pwordFetchUser();
 	void passwordActivated(SafeItem *item);
 	void passwordMenuRequested(const QPoint &point);
+	void dockGroupActivated(QModelIndex index);
 	void helpAbout(int page);
 	void helpManual();
 	Safe *getSafe();

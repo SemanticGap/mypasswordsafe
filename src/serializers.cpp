@@ -513,15 +513,16 @@ Safe::Error BlowfishLizer2::load(Safe &safe, const QString &path,
   QString group;
 
   do {
-    item = new SafeEntry(&safe);
+    item = new SafeEntry(NULL);
     group = "";
     numread = readEntry(in, *item, group, fish, ipthing, def_user);
     DBGOUT("Read: " << item->name().toStdString() << " in " << group.toStdString());
 
     if(numread > 0) {
-      if(!group.isEmpty()) {
+      if(group.isEmpty()) {
+        safe.addItem(item);
+      } else {
 	SafeGroup *parent = findOrCreateGroup(&safe, group);
-	safe.takeItem(item);
 	parent->addItem(item);
       }
     }

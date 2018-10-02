@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>315</width>
+    <width>518</width>
     <height>383</height>
    </rect>
   </property>
@@ -26,18 +26,44 @@
    <string>MyPasswordSafe</string>
   </property>
   <widget class="QWidget" name="widget">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>50</y>
-     <width>315</width>
-     <height>333</height>
-    </rect>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
    </property>
-   <layout class="QHBoxLayout">
-    <property name="margin">
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+    <property name="leftMargin">
      <number>0</number>
     </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QLineEdit" name="pwordTreeFilter"/>
+      </item>
+      <item>
+       <widget class="QPushButton" name="clearFilterButton">
+        <property name="text">
+         <string>Reset</string>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normalon>:/images/button_cancel.png</normalon>
+         </iconset>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
     <item>
      <widget class="SafeTreeView" name="pwordTreeView">
       <property name="acceptDrops">
@@ -54,25 +80,38 @@
       <property name="dragEnabled">
        <bool>true</bool>
       </property>
-      <property name="dragDropMode">
-       <enum>QAbstractItemView::DragDrop</enum>
-      </property>
       <property name="alternatingRowColors">
        <bool>true</bool>
       </property>
+      <property name="sortingEnabled">
+       <bool>true</bool>
+      </property>
+      <property name="animated">
+       <bool>true</bool>
+      </property>
+      <property name="headerHidden">
+       <bool>false</bool>
+      </property>
+      <property name="dropIndicatorShown" stdset="0">
+       <bool>true</bool>
+      </property>
+      <attribute name="headerVisible">
+       <bool>true</bool>
+      </attribute>
      </widget>
     </item>
    </layout>
   </widget>
   <widget class="QToolBar" name="toolBar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>360</width>
-     <height>32</height>
-    </rect>
+   <property name="windowTitle">
+    <string>Toolbar</string>
    </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
    <addaction name="fileNewAction"/>
    <addaction name="fileOpenAction"/>
    <addaction name="fileSaveAction"/>
@@ -92,7 +131,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>315</width>
+     <width>518</width>
      <height>17</height>
     </rect>
    </property>
@@ -134,6 +173,7 @@
     <addaction name="clearClipboardOnExitAction"/>
     <addaction name="lockOnMinimizeAction"/>
     <addaction name="separator"/>
+    <addaction name="settingsDocks"/>
     <addaction name="settingsGenerateAndShow"/>
     <addaction name="settingsGenerateAndFetch"/>
     <addaction name="settingsGenerateOnNew"/>
@@ -153,6 +193,70 @@
    <addaction name="PopupMenu"/>
    <addaction name="PopupMenu_2"/>
    <addaction name="helpMenu"/>
+  </widget>
+  <widget class="QDockWidget" name="dockWidget">
+   <property name="windowTitle">
+    <string>Groups</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents">
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QTreeView" name="dockTree">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="dragEnabled">
+        <bool>true</bool>
+       </property>
+       <property name="dragDropMode">
+        <enum>QAbstractItemView::DragDrop</enum>
+       </property>
+       <property name="alternatingRowColors">
+        <bool>true</bool>
+       </property>
+       <property name="sortingEnabled">
+        <bool>false</bool>
+       </property>
+       <property name="animated">
+        <bool>true</bool>
+       </property>
+       <property name="headerHidden">
+        <bool>true</bool>
+       </property>
+       <attribute name="headerShowSortIndicator" stdset="0">
+        <bool>true</bool>
+       </attribute>
+       <attribute name="headerStretchLastSection">
+        <bool>false</bool>
+       </attribute>
+      </widget>
+     </item>
+    </layout>
+   </widget>
   </widget>
   <action name="fileNewAction">
    <property name="icon">
@@ -835,25 +939,24 @@
     <cstring>editClearClipboardAction</cstring>
    </property>
   </action>
+  <action name="settingsDocks">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Docks</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>QToolBar</class>
-   <extends>QFrame</extends>
-   <header>qlistview.h</header>
-  </customwidget>
-  <customwidget>
-   <class>QFrame</class>
-   <extends>QFrame</extends>
-   <header>QFrame</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>QMainWindow</class>
-   <extends>QWidget</extends>
-   <header>qmainwindow.h</header>
-   <container>1</container>
+   <class>SafeTreeView</class>
+   <extends>QTreeView</extends>
+   <header>safetreeview.hpp</header>
   </customwidget>
  </customwidgets>
  <includes>
@@ -869,7 +972,7 @@
  <connections>
   <connection>
    <sender>changePassPhraseAction</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>MyPSMainWindow</receiver>
    <slot>fileChangePassPhrase()</slot>
    <hints>
@@ -885,7 +988,7 @@
   </connection>
   <connection>
    <sender>createGroupAction</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>MyPSMainWindow</receiver>
    <slot>createGroup()</slot>
    <hints>
@@ -901,7 +1004,7 @@
   </connection>
   <connection>
    <sender>fileExitAction</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>MyPSMainWindow</receiver>
    <slot>fileExit()</slot>
    <hints>
@@ -917,7 +1020,7 @@
   </connection>
   <connection>
    <sender>fileMakeDefaultAction</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>MyPSMainWindow</receiver>
    <slot>fileMakeDefault()</slot>
    <hints>
@@ -933,7 +1036,7 @@
   </connection>
   <connection>
    <sender>fileNewAction</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>MyPSMainWindow</receiver>
    <slot>fileNew()</slot>
    <hints>
@@ -949,7 +1052,7 @@
   </connection>
   <connection>
    <sender>fileOpenAction</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>MyPSMainWindow</receiver>
    <slot>fileOpen()</slot>
    <hints>
@@ -965,7 +1068,7 @@
   </connection>
   <connection>
    <sender>fileOpenDefaultAction</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>MyPSMainWindow</receiver>
    <slot>fileOpenDefault()</slot>
    <hints>
@@ -981,7 +1084,7 @@
   </connection>
   <connection>
    <sender>filePrefAction</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>MyPSMainWindow</receiver>
    <slot>filePreferences()</slot>
    <hints>
@@ -997,7 +1100,7 @@
   </connection>
   <connection>
    <sender>fileSaveAction</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>MyPSMainWindow</receiver>
    <slot>save()</slot>
    <hints>
@@ -1013,7 +1116,7 @@
   </connection>
   <connection>
    <sender>fileSaveAsAction</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>MyPSMainWindow</receiver>
    <slot>saveAs()</slot>
    <hints>
@@ -1029,7 +1132,7 @@
   </connection>
   <connection>
    <sender>helpManualAction</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>MyPSMainWindow</receiver>
    <slot>helpManual()</slot>
    <hints>
@@ -1045,7 +1148,7 @@
   </connection>
   <connection>
    <sender>helpWhatsThisAction</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>MyPSMainWindow</receiver>
    <slot>whatsThis()</slot>
    <hints>
@@ -1061,7 +1164,7 @@
   </connection>
   <connection>
    <sender>lockAction</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>MyPSMainWindow</receiver>
    <slot>lock()</slot>
    <hints>
@@ -1077,7 +1180,7 @@
   </connection>
   <connection>
    <sender>pwordAddAction</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>MyPSMainWindow</receiver>
    <slot>pwordAdd()</slot>
    <hints>
@@ -1093,7 +1196,7 @@
   </connection>
   <connection>
    <sender>pwordDeleteAction</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>MyPSMainWindow</receiver>
    <slot>pwordDelete()</slot>
    <hints>
@@ -1109,7 +1212,7 @@
   </connection>
   <connection>
    <sender>pwordEditAction</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>MyPSMainWindow</receiver>
    <slot>pwordEdit()</slot>
    <hints>
@@ -1125,7 +1228,7 @@
   </connection>
   <connection>
    <sender>pwordFetchAction</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>MyPSMainWindow</receiver>
    <slot>pwordFetch()</slot>
    <hints>
@@ -1141,7 +1244,7 @@
   </connection>
   <connection>
    <sender>pwordFetchUserAction</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>MyPSMainWindow</receiver>
    <slot>pwordFetchUser()</slot>
    <hints>
@@ -1157,7 +1260,7 @@
   </connection>
   <connection>
    <sender>helpAboutAction</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>MyPSMainWindow</receiver>
    <slot>helpAbout()</slot>
    <hints>
@@ -1219,5 +1322,57 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>settingsDocks</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>dockWidget</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>50</x>
+     <y>216</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dockWidget</sender>
+   <signal>visibilityChanged(bool)</signal>
+   <receiver>settingsDocks</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>50</x>
+     <y>216</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>clearFilterButton</sender>
+   <signal>pressed()</signal>
+   <receiver>pwordTreeFilter</receiver>
+   <slot>clear()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>476</x>
+     <y>57</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>347</x>
+     <y>57</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
+ <slots>
+  <slot>setGenerateOnNew(bool)</slot>
+  <slot>changePassPhraseAction()</slot>
+ </slots>
 </ui>

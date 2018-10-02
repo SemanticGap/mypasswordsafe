@@ -2,6 +2,7 @@
 #define SAFETREEVIEW_HPP
 
 #include <QTreeView>
+#include <QSortFilterProxyModel>
 #include "safetreemodel.hpp"
 
 class Safe;
@@ -13,6 +14,7 @@ class SafeTreeView: public QTreeView
 
 	Safe *m_safe;
 	SafeTreeModel *m_tree;
+	QSortFilterProxyModel *m_proxy;
 
 public:
 	SafeTreeView(QWidget *parent);
@@ -20,11 +22,16 @@ public:
 
 public slots:
 	void setSafe(Safe *);
+	inline Safe *safe() { return m_tree->safe(); }
+	inline SafeTreeModel *safeModel() { return m_tree; }
+
+	QModelIndex getSelectedIndex() const;
 	SafeItem *getSelectedItem();
 	void itemAdded(SafeItem *, bool);
 	void itemChanged(SafeItem *);
 	void itemDeleted(SafeItem *);
 	void promoteActivated(const QModelIndex &);
+	void setFilter(QString);
 
 signals:
 	void activated(SafeItem *);

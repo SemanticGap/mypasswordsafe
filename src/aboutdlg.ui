@@ -51,7 +51,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget2">
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -140,6 +140,13 @@ p, li { white-space: pre-wrap; }
    <item>
     <layout class="QHBoxLayout">
      <item>
+      <widget class="QPushButton" name="aboutQtButton">
+       <property name="text">
+        <string>About &amp;Qt</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="spacer10">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -156,7 +163,7 @@ p, li { white-space: pre-wrap; }
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton11">
+      <widget class="QPushButton" name="closeButton">
        <property name="text">
         <string>&amp;Close</string>
        </property>
@@ -182,7 +189,7 @@ p, li { white-space: pre-wrap; }
  </resources>
  <connections>
   <connection>
-   <sender>pushButton11</sender>
+   <sender>closeButton</sender>
    <signal>clicked()</signal>
    <receiver>AboutDlg</receiver>
    <slot>accept()</slot>

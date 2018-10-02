@@ -74,11 +74,15 @@ void MyPasswordSafe::init()
 #endif /* __APPLE__ */
 
   m_clipboard = Clipboard::instance();
-  connect(editClearClipboardAction, SIGNAL(activated()), m_clipboard, SLOT(clear()));
+  connect(editClearClipboardAction, SIGNAL(triggered()), m_clipboard, SLOT(clear()));
   connect(m_clipboard, SIGNAL(cleared()), this, SLOT(clipboardCleared()));
 
+  connect(dockTree, SIGNAL(pressed(QModelIndex)), this, SLOT(dockGroupActivated(QModelIndex)));
   connect(pwordTreeView, SIGNAL(activated(SafeItem *)), this, SLOT(passwordActivated(SafeItem *)));
   connect(pwordTreeView, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(passwordMenuRequested(const QPoint &)));
+  connect(pwordTreeFilter, SIGNAL(textChanged(QString)), pwordTreeView, SLOT(setFilter(QString)));
+
+  settingsDocks->setMenu(createPopupMenu());
 
   m_do_lock = false;
   savingEnabled(false);
@@ -98,13 +102,20 @@ void MyPasswordSafe::init()
 
 void MyPasswordSafe::destroy()
 {
-  delete m_idle;
+  DBGOUT("destroy");
+
+  if(m_idle)
+    delete m_idle;
 
   if(clearClipboardOnExit())
     m_clipboard->copy("");
 
-  if(m_safe)
+  if(m_safe) {
+    pwordTreeView->setSafe(NULL);
+    dockTree->setModel(NULL);
     delete m_safe;
+    m_safe = NULL;
+  }
 }
 
 
@@ -137,6 +148,8 @@ bool MyPasswordSafe::closeSafe()
 	break;
       }
     }
+    pwordTreeView->setSafe(NULL);
+    dockTree->setModel(NULL);
     delete m_safe;
     m_safe = NULL;
     savingEnabled(false);
@@ -289,6 +302,7 @@ bool MyPasswordSafe::open( const char *filename, const EncryptedString &passkey,
 
       m_safe = s;
       pwordTreeView->setSafe(m_safe);
+      dockTree->setModel(pwordTreeView->model());
 
       if(current_safe != NULL)
 	delete current_safe;
@@ -556,6 +570,16 @@ void MyPasswordSafe::passwordActivated(SafeItem *item)
     pwordFetch();
 }
 
+void MyPasswordSafe::dockGroupActivated(QModelIndex index)
+{
+  if(!index.isValid())
+    pwordTreeView->setRootIndex(index);
+  else if(pwordTreeView->model()->hasChildren(index))
+    pwordTreeView->setRootIndex(index);
+  else
+    pwordTreeView->setRootIndex(pwordTreeView->model()->parent(index));
+}
+
 void MyPasswordSafe::passwordMenuRequested(const QPoint &point)
 {
   PopupMenu->popup(pwordTreeView->mapToGlobal(point));
@@ -683,6 +707,7 @@ void MyPasswordSafe::createNewSafe(const EncryptedString &passphrase)
     m_safe = new Safe();
     m_safe->setPassPhrase(passphrase);
     pwordTreeView->setSafe(m_safe);
+    dockTree->setModel(pwordTreeView->model());
     m_safe->setChanged(false);
     setWindowTitle(tr("MyPasswordSafe: <untitled>"));
     savingEnabled(false);

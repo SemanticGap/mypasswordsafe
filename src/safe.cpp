@@ -152,16 +152,12 @@ SafeGroup *findOrCreateGroup(Safe *safe, const QString &group_name)
 }
 
 SafeItem::SafeItem(SafeGroup *parent, const QString &name)
-  : QObject(parent), m_parent(NULL), m_name(name)
+  : QObject(parent), m_safe(NULL), m_parent(NULL), m_name(name)
 {
   Q_ASSERT(parent != this);
 
   if(parent != NULL) {
-    m_safe = parent->safe();
-    parent->addItem(this);
-  }
-  else {
-    m_safe = (Safe *)this;
+    setParent(parent);
   }
 }
 
@@ -176,9 +172,16 @@ int SafeItem::rtti() const
   return -1;
 }
 
-void SafeItem::setParent(SafeGroup *parent)
+void SafeItem::setParent(SafeGroup *parent, bool from_parent)
 {
-  m_parent = parent;
+  if(parent != NULL) {
+    m_parent = parent;
+    m_safe = parent->safe();
+    if(!from_parent && parent->index(this) == -1) parent->addItem(this);
+  } else {
+    m_parent = NULL;
+    m_safe = NULL;
+  }
 }
 
 void SafeItem::setName(const QString &name)
@@ -215,17 +218,24 @@ SafeItem *SafeGroup::Iterator::prev()
 SafeGroup::SafeGroup(SafeGroup *p, const QString &name)
   : SafeItem(p, name)
 {
-  if(p != NULL) {
-    connect(this, SIGNAL(itemAdded(SafeItem *, SafeGroup *)), safe(), SIGNAL(itemAdded(SafeItem *, SafeGroup *)));
-    connect(this, SIGNAL(itemPreAdd(SafeItem *, SafeGroup *)), safe(), SIGNAL(itemPreAdd(SafeItem *, SafeGroup *)));
-    //connect(this, SIGNAL(itemDeleted(SafeGroup *)), safe(), SIGNAL(itemDeleted(SafeGroup *)));
-    //connect(this, SIGNAL(itemPreDelete(SafeItem *, SafeGroup *)), safe(), SIGNAL(itemPreDelete(SafeItem *, SafeGroup *)));
-  }
+  setParent(p);
 }
 
 SafeGroup::~SafeGroup()
 {
   empty();
+}
+
+void SafeGroup::setParent(SafeGroup *parent, bool from_parent)
+{
+  SafeItem::setParent(parent, from_parent);
+
+  if(safe() != NULL) {
+    connect(this, SIGNAL(itemAdded(SafeItem *, SafeGroup *)), safe(), SIGNAL(itemAdded(SafeItem *, SafeGroup *)));
+    connect(this, SIGNAL(itemPreAdd(SafeItem *, SafeGroup *)), safe(), SIGNAL(itemPreAdd(SafeItem *, SafeGroup *)));
+    //connect(this, SIGNAL(itemDeleted(SafeGroup *)), safe(), SIGNAL(itemDeleted(SafeGroup *)));
+    //connect(this, SIGNAL(itemPreDelete(SafeItem *, SafeGroup *)), safe(), SIGNAL(itemPreDelete(SafeItem *, SafeGroup *)));
+  }
 }
 
 int SafeGroup::rtti() const
@@ -237,8 +247,8 @@ void SafeGroup::addItem(SafeItem *item)
 {
   emit itemPreAdd(item, this);
   m_items.append(item);
-  item->setParent(this);
-  DBGOUT("emitting itemAdded " << this->name().toStdString());
+  item->setParent(this, true);
+  DBGOUT("emitting itemAdded " << this->name().toStdString() << " in " << this->name().toStdString());
   emit itemAdded(item, this);
 }
 
@@ -274,7 +284,7 @@ SafeItem *SafeGroup::at(int i)
 
 int SafeGroup::index(SafeItem *item) const
 {
-  return m_items.indexOf(item, -1);
+  return m_items.indexOf(item);
 }
 
 SafeGroup::Iterator SafeGroup::first() const
@@ -463,6 +473,7 @@ void SafeEntry::init()
 Safe::Safe()
   : SafeGroup(NULL), m_passphrase(NULL), m_changed(false)
 {
+  setSafe(this);
   //connect(this, SIGNAL(itemPreDelete(SafeItem *, SafeGroup *)), this, SLOT(doDeleteItem(SafeItem *, SafeGroup *)));
 }
 
