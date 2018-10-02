@@ -591,7 +591,7 @@ Safe::Error BlowfishLizer2::save(Safe &safe, const QString &path, const QString 
 			thesalt, SaltLength));
 
     // write format header
-    SafeEntry *format_hdr = new SafeEntry(&safe, FormatName, "", FormatVersion, "");
+    SafeEntry *format_hdr = new SafeEntry(NULL, FormatName, "", FormatVersion, "");
     if(BlowfishLizer::writeEntry(out, *format_hdr,
 				 fish.get(), ipthing,
 				 def_user, true) == 0) {

@@ -266,12 +266,15 @@ void SafeGroup::empty()
 
 SafeItem *SafeGroup::at(int i)
 {
-  return m_items.at(i);
+  if(i >= 0 && i < count())
+    return m_items.at(i);
+  else
+    return NULL;
 }
 
 int SafeGroup::index(SafeItem *item) const
 {
-  return m_items.indexOf(item, 0);
+  return m_items.indexOf(item, -1);
 }
 
 SafeGroup::Iterator SafeGroup::first() const
@@ -511,7 +514,7 @@ Safe::Error Safe::checkPassword(const QString &path, const QString &type, const 
   if(!info.exists())
     return BadFile;
 
-  QString ext(info.completeSuffix());
+  QString ext(info.suffix());
   SafeSerializer *serializer(createSerializer(ext, type));
 
   DBGOUT("Path: " << path.toAscii().data());
@@ -567,7 +570,7 @@ Safe::Error Safe::load(const QString &path, const QString &type,
   if(!info.exists())
     return BadFile;
 
-  QString ext(info.completeSuffix());
+  QString ext(info.suffix());
   SafeSerializer *serializer(createSerializer(ext, type));
 
   if(serializer) {
@@ -653,7 +656,7 @@ Safe::Error Safe::save(const QString &path, const QString &type,
   Q_ASSERT(!path.isEmpty());
 
   QFileInfo info(path);
-  QString ext(info.completeSuffix());
+  QString ext(info.suffix());
   SafeSerializer *serializer(createSerializer(ext, type));
 
   if(serializer) {
