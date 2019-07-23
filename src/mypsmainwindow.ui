@@ -960,10 +960,8 @@
   </customwidget>
  </customwidgets>
  <includes>
-  <include location="global">string</include>
   <include location="local">safe.hpp</include>
   <include location="global">qsettings.h</include>
-  <include location="local">ui_manualdlg.h</include>
   <include location="local">safetreeview.hpp</include>
  </includes>
  <resources>

@@ -292,7 +292,6 @@
   <tabstop>tabWidget</tabstop>
  </tabstops>
  <includes>
-  <include location="global">time.h</include>
  </includes>
  <resources>
   <include location="../resources.qrc"/>

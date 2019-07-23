@@ -382,7 +382,6 @@
   <tabstop>helpButton</tabstop>
  </tabstops>
  <includes>
-  <include location="global">string</include>
  </includes>
  <resources>
   <include location="../resources.qrc"/>
